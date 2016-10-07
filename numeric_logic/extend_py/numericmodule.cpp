@@ -2,7 +2,11 @@
 // Distributed under the terms of the MIT License.
 
 
+#include "../tabulate.hpp"
+
 #include <Python.h>
+
+#include <vector>
 
 
 static PyObject *evalFunc = NULL;
