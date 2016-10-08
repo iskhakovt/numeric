@@ -14,7 +14,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'numeric_web.settings')
 
 from django.conf import settings  # noqa
 
-app = Celery('numeric_web')
+app = Celery('numeric-web')
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
