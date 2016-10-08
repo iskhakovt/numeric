@@ -8,6 +8,6 @@ from .docker import Docker
 
 
 def index(request):
-    docker = Docker()
-    docker.run.delay()
-    return
+    # docker = Docker()
+    # docker.run.delay()
+    return render(request, 'index.html')

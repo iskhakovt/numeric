@@ -90,3 +90,11 @@ ENV/
 
 # Django db
 *.sqlite3
+
+
+# JS libs
+node_modules/
+
+# Webpack build
+bundles/
+webpack-stats.json
