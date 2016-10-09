@@ -2,7 +2,7 @@
 # Distributed under the terms of the MIT License.
 
 
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.0)
 project(numeric-core)
 
 if (APPLE)
