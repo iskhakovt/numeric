@@ -2,12 +2,34 @@
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+
+    <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css"
+            crossorigin="anonymous"
+    >
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"
+    >
 </head>
 <body>
+    <div id="root"></div>
+
     {% render_bundle 'main' %}
+
+    <script
+            type="text/javascript"
+            async
+            src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"
+    ></script>
+    <script
+            type="text/javascript"
+            async
+            src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"
+    ></script>
 </body>
 </html>

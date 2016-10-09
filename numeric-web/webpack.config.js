@@ -22,10 +22,10 @@ module.exports = {
   module: {
     loaders: [
       // To transform JSX into JS
-      {test: /\.(jsx)?$/, exclude: /node_modules/, loader: 'babel-loader', query: {presets: ['es2015', 'react']}}
+      {test: /\.(jsx)?$/, loader: 'babel-loader', query: {presets: ['es2015', 'react']}}
     ],
     preLoaders: [
-      { test: /\.(js|jsx)?$/, loader: 'standard', exclude: /(node_modules|bower_components)/}
+      // { test: /\.(js|jsx)?$/, loader: 'standard', exclude: /(node_modules|bower_components)/}
     ],
     standard: {
       // Options to be passed through to standard

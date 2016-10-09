@@ -3,6 +3,8 @@
 
 
 import os
+import sys
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -136,3 +138,7 @@ WEBPACK_LOADER = {
         'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
     }
 }
+
+
+CORE_LIB_DIR = BASE_DIR + '/../numeric-core'
+sys.path.append(CORE_LIB_DIR)
