@@ -69,7 +69,7 @@ class Problem extends React.Component {
 
     return (
       <row>
-        <TeX>{this.state.problem.description}</TeX>
+        <h1><TeX>{this.state.problem.description}</TeX></h1>
       </row>
     );
   }

@@ -42,7 +42,7 @@ def tabulate_integral(args):
 
 
 PROBLEMS = {
-    'tabulate': Problem(
+    '1-tabulate': Problem(
         '\\text{Задание функции }\\rho(\\omega)',
         '\\text{Задание функции }\\rho(\\omega) = a\\omega(b - \\omega)',
         {
@@ -52,7 +52,7 @@ PROBLEMS = {
         },
         tabulate
     ),
-    'tabulate-integral': Problem(
+    '2-tabulate-integral': Problem(
         '\\text{Табулирование интеграла}',
         '\\text{Табулирование интеграла }\\int\\limits_y^1 \\rho(\\omega) \\operatorname{d}\\!{\\omega} = U(y)',
         {
@@ -61,7 +61,7 @@ PROBLEMS = {
         },
         tabulate_integral
     ),
-    'cauchy': Problem(
+    '3-cauchy': Problem(
         '\\text{Решение задачи Коши}',
         '\\text{Решение задачи Коши}',
         {

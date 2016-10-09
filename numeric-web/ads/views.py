@@ -23,8 +23,6 @@ def api_problems(request):
 
 
 def api_problem(request, problemName):
-    print(problemName)
-
     if problemName not in PROBLEMS:
         return HttpResponseBadRequest()
     return JsonResponse(PROBLEMS[problemName].get_dict())

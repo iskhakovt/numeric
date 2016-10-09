@@ -44,6 +44,8 @@ class Problems extends React.Component {
   }
 
   render() {
+    let sortedKeys = _.sortBy(Object.keys(this.state.problems));
+
     return (
       <div>
         <Navbar>
@@ -55,11 +57,11 @@ class Problems extends React.Component {
           <Nav key="problems">
             {
               _.map(
-                this.state.problems,
-                (problem, key) =>
+                sortedKeys,
+                (key) =>
                   <LinkContainer key={key} to={`/problem/${key}`}>
                     <NavItem key={key} active={true}>
-                      <TeX>{problem.short_description}</TeX>
+                      <TeX>{this.state.problems[key].short_description}</TeX>
                     </NavItem>
                   </LinkContainer>
               )
