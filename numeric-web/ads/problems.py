@@ -33,12 +33,16 @@ class Problem:
 
 
 def tabulate(args):
-    func = lambda x: args['a'] * x * (args['b'] - x)
-    return numeric.tabulate(func, args['n'])
+    a = float(args['1-a'])
+    b = float(args['2-b'])
+    n = int(args['3-n'])
+
+    func = lambda x: a * x * (b - x)
+    return numeric.tabulate(func, n)
 
 
 def tabulate_integral(args):
-    return numeric.tabulate_integral(args['rho'], args['y'])
+    return numeric.tabulate_integral(args['1-rho'], args['2-y'])
 
 
 PROBLEMS = {

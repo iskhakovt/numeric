@@ -33,12 +33,20 @@ def api_query(request, problemName):
         return HttpResponseBadRequest()
     problem = PROBLEMS[problemName]
     args = {}
-    for arg in problem.args:
-        if arg not in request.POST:
-            return HttpResponseBadRequest()
-        args[arg] = request.POST[arg]
 
-    query = Query.create()
+    try:
+        for arg in problem.args:
+            if arg not in request.POST:
+                return HttpResponseBadRequest()
+            if problem.args[arg].isFunction:
+                args[arg] = process_csv(request.POST[arg])
+            else:
+                args[arg] = float(request.POST[arg])
+    except (TypeError, IndexError, KeyError, ValueError, AssertionError):
+        return HttpResponseBadRequest()
+
+
+    query = Query.create(problemName, args)
     query.save()
 
     docker = Docker(query, problem.func, args)
@@ -54,3 +62,14 @@ def api_result(request, id):
         return JsonResponse({'status': query.status})
 
     return JsonResponse(query.get_dict())
+
+
+def process_csv(data):
+    x, y = [], []
+
+    for elem in data:
+        assert len(elem) == 2
+        x.append(float(elem[0]))
+        y.append(float(elem[1]))
+
+    return x, y

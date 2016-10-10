@@ -81,7 +81,7 @@ class Problem_ extends React.Component {
   processCSV(argName, e) {
     let parsed = Baby.parse(e.target.result);
 
-    if (parsed.errors.length === 0) {
+    if (parsed.errors.length === 0 && this.validateFloat(parsed.data)) {
       this.setStateByKey(argName, parsed.data);
     } else {
       this.setStateByKey(argName, 'error');
@@ -101,6 +101,14 @@ class Problem_ extends React.Component {
     }
   }
 
+  validateFloat(value) {
+    return value.match(/^-?\d*(\.\d+)?$/) && !isNaN(parseFloat(value));
+  }
+
+  validateCsv(value) {
+    return _.every(value, (elem) => elem.length === 2 && _.every(elem, (val) => validateFloat(val)));
+  }
+
   getValidationState(argName) {
     let value = this.state[argName];
 
@@ -115,7 +123,7 @@ class Problem_ extends React.Component {
         return 'error'
       }
     } else {
-      if (value.match(/^-?\d*(\.\d+)?$/) && !isNaN(parseFloat(value))) {
+      if (this.validateFloat(value)) {
         return 'success';
       } else {
         return 'error';

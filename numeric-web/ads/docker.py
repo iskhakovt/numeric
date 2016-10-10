@@ -24,7 +24,7 @@ class Docker:
     @app.task(filter=task_method, bind=True)
     def run(docker, self):
         start = default_timer()
-        
+
         try:
             res = self.func(self.args)
         except Exception as err:
