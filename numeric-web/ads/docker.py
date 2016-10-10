@@ -5,7 +5,6 @@
 from __future__ import absolute_import
 
 from celery.contrib.methods import task_method
-import json
 from timeit import default_timer
 from traceback import format_exc
 
