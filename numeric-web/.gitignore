@@ -90,6 +90,7 @@ ENV/
 
 # Django db
 *.sqlite3
+migrations/
 
 
 # JS libs
