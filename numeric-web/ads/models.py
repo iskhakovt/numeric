@@ -38,3 +38,6 @@ class Query(models.Model):
             problem=problem,
             args=args
         )
+
+    def __str__(self):
+        return self.problem
