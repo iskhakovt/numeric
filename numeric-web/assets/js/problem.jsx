@@ -31,8 +31,7 @@ class Problem_ extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     let problem = nextProps.params.problem;
-
-    if (nextProps.params.problem !== this.state.problemName) {
+    if (problem !== this.state.problemName) {
       this.load(problem);
     }
   }
@@ -81,7 +80,7 @@ class Problem_ extends React.Component {
   processCSV(argName, e) {
     let parsed = Baby.parse(e.target.result);
 
-    if (parsed.errors.length === 0 && this.validateFloat(parsed.data)) {
+    if (parsed.errors.length === 0 && this.validateCsv(parsed.data)) {
       this.setStateByKey(argName, parsed.data);
     } else {
       this.setStateByKey(argName, 'error');
@@ -106,7 +105,7 @@ class Problem_ extends React.Component {
   }
 
   validateCsv(value) {
-    return _.every(value, (elem) => elem.length === 2 && _.every(elem, (val) => validateFloat(val)));
+    return _.every(value, (elem) => elem.length === 2 && _.every(elem, (val) => this.validateFloat(val)));
   }
 
   getValidationState(argName) {
@@ -168,6 +167,12 @@ class Problem_ extends React.Component {
     }
   }
 
+  getArgs() {
+    var args = {};
+    _.forEach(this.state.problem.args, (arg, argName) => args[argName] = JSON.stringify(this.state[argName]));
+    return args;
+  }
+
   submit() {
     if (!_.map(this.state.problem.args, (arg, argName) =>
         this.getValidationState(argName)).every((x) => x === 'success')) {
@@ -178,7 +183,7 @@ class Problem_ extends React.Component {
     let problemName = this.state.problemName;
     $.post(
       '/api/query/' + problemName + '/',
-      _.mapValues(this.state.problem.args, (arg, argName) => this.state[argName])
+      this.getArgs()
     ).done(
       (res) => this.props.router.push('/result/' + res.query)
     )

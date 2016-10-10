@@ -4,6 +4,7 @@
 
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render
+import json
 
 from .docker import Docker
 from .models import Query
@@ -38,10 +39,12 @@ def api_query(request, problemName):
         for arg in problem.args:
             if arg not in request.POST:
                 return HttpResponseBadRequest()
+
+            value = json.loads(request.POST[arg])
             if problem.args[arg].isFunction:
-                args[arg] = process_csv(request.POST[arg])
+                args[arg] = process_csv(value)
             else:
-                args[arg] = float(request.POST[arg])
+                args[arg] = float(value)
     except (TypeError, IndexError, KeyError, ValueError, AssertionError):
         return HttpResponseBadRequest()
 
@@ -57,10 +60,6 @@ def api_query(request, problemName):
 
 def api_result(request, id):
     query = get_object_or_404(Query, id=id)
-
-    if query.status != 'OK':
-        return JsonResponse({'status': query.status})
-
     return JsonResponse(query.get_dict())
 
 

@@ -26,9 +26,9 @@ class Query(models.Model):
     def get_dict(self):
         return {
             'status': self.status,
-            'time:': self.time,
-            'args': self.args.serialize(),
-            'result': self.result.serialize()
+            'time': self.time,
+            'args': self.args,
+            'result': self.result
         }
 
     @classmethod
@@ -36,5 +36,5 @@ class Query(models.Model):
         return cls.objects.create(
             id=get_random_string(length=32),
             problem=problem,
-            args=json.dumps(args)
+            args=args
         )

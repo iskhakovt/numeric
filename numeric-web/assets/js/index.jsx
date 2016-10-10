@@ -17,8 +17,8 @@ render(
       <Route path='problem'>
         <Route path=':problem' component={Problem}/>
       </Route>
-      <Route path='result' component={Result}>
-        <Route path=':problem' component={Result}/>
+      <Route path='result'>
+        <Route path=':id' component={Result}/>
       </Route>
     </Route>
   </Router>,

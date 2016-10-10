@@ -38,11 +38,40 @@ def tabulate(args):
     n = int(args['3-n'])
 
     func = lambda x: a * x * (b - x)
-    return numeric.tabulate(func, n)
+    ret = numeric.tabulate(func, n)
+
+    return [
+        {
+            'type': 'text',
+            'data': '\\text{Задание функции }\\rho(\\omega) = ' + \
+                str(round(a, 2)) + \
+                '\\omega(' + str(round(b, 2)) + \
+                ' - \\omega)'
+        },
+        {
+            'type': 'function',
+            'description': '\\text{Загрузить }\\rho(\\omega)',
+            'filename': 'rho',
+            'data': ret
+        },
+        {
+            'type': 'graph',
+            'description': 'График',
+            'data': ret
+        },
+    ]
 
 
 def tabulate_integral(args):
-    return numeric.tabulate_integral(args['1-rho'], args['2-y'])
+    ret = numeric.tabulate_integral(args['1-rho'])
+
+    return [
+        {
+            'type': 'text',
+            'data': '\\text{Табулирование интеграла}'
+        },
+        {'type': 'function', 'description': '\\rho(\\omega)', 'data': ret}
+    ]
 
 
 PROBLEMS = {
@@ -61,7 +90,6 @@ PROBLEMS = {
         '\\text{Табулирование интеграла }\\int\\limits_y^1 \\rho(\\omega) \\operatorname{d}\\!{\\omega} = U(y)',
         {
             '1-rho': ProblemArgument('\\rho(\\omega)', True),
-            '2-y': ProblemArgument('y', False)
         },
         tabulate_integral
     ),

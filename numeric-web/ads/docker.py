@@ -4,10 +4,13 @@
 
 from __future__ import absolute_import
 
+from celery.contrib.methods import task_method
+import json
 from timeit import default_timer
+from traceback import format_exc
 
 from numeric_web.celery import app
-from celery.contrib.methods import task_method
+from numeric_web.settings import DEBUG
 
 
 class Docker:
@@ -18,7 +21,7 @@ class Docker:
 
     def fail(self, err):
         self.query.status = 'FL'
-        self.query.result = {'error', str(err)}
+        self.query.result = {'error': err}
         self.query.save()
 
     @app.task(filter=task_method, bind=True)
@@ -28,12 +31,12 @@ class Docker:
         try:
             res = self.func(self.args)
         except Exception as err:
-            self.fail(err)
+            self.fail(format_exc() if DEBUG else str(err))
             return
 
         end = default_timer()
 
-        self.status = 'OK'
+        self.query.status = 'OK'
         self.query.time = end - start
         self.query.result = res
         self.query.save()
