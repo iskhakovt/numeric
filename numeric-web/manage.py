@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Timur Iskhakov.
 # Distributed under the terms of the MIT License.

@@ -42,5 +42,5 @@ celery -A numeric_web worker --loglevel=info
 
 4. Django
   ```bash
-python3 manage.py runserver
+./manage.py runserver
 ```
