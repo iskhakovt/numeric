@@ -15,7 +15,8 @@ static double call_func(double arg) {
     return PyFloat_AsDouble(result);
 }
 
-static PyObject * to_list(const std::vector<double> &arr) {
+
+static PyObject * vector_to_py(const std::vector<double> &arr) {
     PyObject *list = PyList_New(arr.size());
 
     for (size_t i = 0; i != arr.size(); ++i) {
@@ -26,13 +27,13 @@ static PyObject * to_list(const std::vector<double> &arr) {
 }
 
 static PyObject * tabulated_to_py(const Tabulated &func) {
-    PyObject *x = to_list(func.x);
-    PyObject *y = to_list(func.y);
+    PyObject *x = vector_to_py(func.x);
+    PyObject *y = vector_to_py(func.y);
 
     return PyTuple_Pack(2, x, y);
 }
 
-static std::vector<double> to_vector(PyObject *list) {
+static std::vector<double> py_to_vector(PyObject *list) {
     std::vector<double> arr(static_cast<size_t>(PyList_Size(list)));
 
     for (size_t i = 0; i != arr.size(); ++i) {
@@ -42,23 +43,32 @@ static std::vector<double> to_vector(PyObject *list) {
     return arr;
 }
 
-static PyObject * numeric_tabulate(PyObject *, PyObject *args)  {
-    PyObject *list;
-    if (!PyArg_ParseTuple(args, "OO!", &evalFunc, &PyList_Type, &list)) {
-        return nullptr;
-    }
+static Tabulated py_to_tabulated(PyObject *tuple) {
+    PyObject *x, *y;
+    PyArg_ParseTuple(tuple, "O!O!", &PyList_Type, &x, &PyList_Type, &y);
 
-    std::vector<double> arr(static_cast<size_t>(PyList_Size(list)));
-    for (size_t i = 0; i != arr.size(); ++i) {
-        arr[i] = PyLong_AsLong(PyList_GetItem(list, i));
-    }
-
-    return tabulated_to_py(tabulate(call_func, to_vector(list)));
+    return Tabulated({py_to_vector(x), py_to_vector(y)});
 }
 
 
+static PyObject * numeric_tabulate(PyObject *, PyObject *args)  {
+    Py_ssize_t n;
+    if (!PyArg_ParseTuple(args, "On", &evalFunc, &n)) {
+        return nullptr;
+    }
+
+    return tabulated_to_py(tabulate_chebyshev(call_func, static_cast<size_t>(n)));
+}
+
+static PyObject * numeric_tabulate_integral(PyObject *, PyObject *args) {
+    return tabulated_to_py(tabulate_integral(py_to_tabulated(args)));
+}
+
+
+
 static PyMethodDef NumericMethods[] = {
-        {"tabulate",  numeric_tabulate, METH_VARARGS, "Execute a shell command."},
+        {"tabulate",  numeric_tabulate, METH_VARARGS, "tabulate"},
+        {"tabulate_integral",  numeric_tabulate_integral, METH_VARARGS, "tabulate integral"},
         {nullptr, nullptr, 0, nullptr} /* Sentinel */
 };
 

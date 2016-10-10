@@ -34,7 +34,7 @@ class Problem:
 
 def tabulate(args):
     func = lambda x: args['a'] * x * (args['b'] - x)
-    return numeric.tabulate_chebyshev(func, args['n'])
+    return numeric.tabulate(func, args['n'])
 
 
 def tabulate_integral(args):

@@ -15,6 +15,8 @@
 
 extern Tabulated tabulate(std::function<double(double)>, const std::vector<double> &);
 
+extern Tabulated tabulate_chebyshev(std::function<double(double)>, size_t);
+
 extern Tabulated tabulate_integral(const Tabulated &);
 
 
