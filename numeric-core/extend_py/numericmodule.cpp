@@ -59,7 +59,12 @@ static bool py_to_vector(PyObject *list, std::vector<double> *ret) {
     return true;
 }
 
-static bool py_to_tabulated(PyObject *listX, PyObject *listY, Tabulated *ret) {
+static bool py_to_tabulated(PyObject *func, Tabulated *ret) {
+    PyObject *listX = nullptr, *listY = nullptr;
+    if (!PyArg_ParseTuple(func, "O!O!", &PyList_Type, &listX, &PyList_Type, &listY)) {
+        return false;
+    }
+
     std::vector<double> x, y;
     if (!py_to_vector(listX, &x) || !py_to_vector(listY, &y)) {
         return false;
@@ -76,19 +81,46 @@ static bool py_to_tabulated(PyObject *listX, PyObject *listY, Tabulated *ret) {
 
 
 static bool py_to_model(PyObject *args, ModelArguments *retArgs, double *beta) {
-    PyObject *u_x = nullptr, *u_y = nullptr, *s_x = nullptr, *s_y = nullptr, *z_x = nullptr, *z_y = nullptr;
+    PyObject *uTuple = nullptr, *sTuple = nullptr, *zTuple = nullptr;
     double x_0, y_0, t;
 
     if (beta) {
-        if (!PyArg_ParseTuple(args, "O!O!O!O!O!O!dddd", u_x, u_y, s_x, s_y, z_x, z_y, &x_0, &y_0, &t, &beta)) {
+        if (!PyArg_ParseTuple(
+            args,
+            "O!O!O!dddd",
+            &PyTuple_Type, &uTuple,
+            &PyTuple_Type, &sTuple,
+            &PyTuple_Type, &zTuple,
+            &x_0, &y_0, &t, &beta))
+        {
             return false;
         }
     } else {
-        if (!PyArg_ParseTuple(args, "O!O!O!O!O!O!ddd", u_x, u_y, s_x, s_y, z_x, z_y, &x_0, &y_0, &t)) {
+        if (!PyArg_ParseTuple(
+            args,
+            "O!O!O!ddd",
+            &PyList_Type, &uTuple,
+            &PyList_Type, &sTuple,
+            &PyList_Type, &zTuple,
+            &x_0, &y_0, &t)
+        ) {
             return false;
         }
     }
 
+    Tabulated u, s, z;
+
+    if (!py_to_tabulated(uTuple, &u)) {
+        return false;
+    }
+    if (!py_to_tabulated(sTuple, &s)) {
+        return false;
+    }
+    if (!py_to_tabulated(zTuple, &z)) {
+        return false;
+    }
+
+    *retArgs = ModelArguments(u, s, z, x_0, y_0, t);
     return true;
 }
 
@@ -103,17 +135,17 @@ static PyObject * numeric_tabulate(PyObject *, PyObject *args)  {
 }
 
 static PyObject * numeric_tabulate_integral(PyObject *, PyObject *args) {
-    PyObject *x, *y = nullptr;
-    if (!PyArg_ParseTuple(args, "O!O!", &PyList_Type, &x, &PyList_Type, &y)) {
+    PyObject *funcTuple;
+    if (!PyArg_ParseTuple(args, "O!", &PyTuple_Type, &funcTuple)) {
         return nullptr;
     }
 
-    Tabulated ret;
-    if (!py_to_tabulated(x, y, &ret)) {
+    Tabulated func;
+    if (!py_to_tabulated(funcTuple, &func)) {
         return nullptr;
     }
 
-    return tabulated_to_py(tabulate_integral(ret));
+    return tabulated_to_py(tabulate_integral(func));
 }
 
 static PyObject * numeric_model(PyObject *, PyObject *args) {

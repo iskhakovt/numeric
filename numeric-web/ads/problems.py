@@ -63,7 +63,7 @@ def tabulate(args):
 
 
 def tabulate_integral(args):
-    ret = numeric.tabulate_integral(*args['1-rho'])
+    ret = numeric.tabulate_integral(args['1-rho'])
 
     return [
         {
@@ -71,6 +71,21 @@ def tabulate_integral(args):
             'data': '\\text{Табулирование интеграла}'
         },
         {'type': 'function', 'description': '\\rho(\\omega)', 'data': ret}
+    ]
+
+
+def cauchy(args):
+    ret = numeric.cauchy(
+        args['1-U'], args['2-S'], args['3-z'],
+        args['4-x0'], args['5-y0'], args['6-beta'], args['7-T']
+    )
+
+    return [
+        {
+            'type': 'text',
+            'data': '\\text{Решение задачи Коши}'
+        },
+        {'type': 'function', 'description': 'f', 'data': ret}
     ]
 
 
@@ -105,6 +120,6 @@ PROBLEMS = {
             '6-beta': ProblemArgument('\\beta', False),
             '7-T': ProblemArgument('T', False),
         },
-        None
+        cauchy
     )
 }
