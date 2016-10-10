@@ -8,6 +8,7 @@ import $ from 'jquery-ajax'
 import _ from 'lodash'
 import { Nav, Navbar, NavItem } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
+import DocumentTitle from 'react-document-title'
 import TeX from 'react-components/js/tex.jsx'
 
 import csrf from './csrf'
@@ -50,6 +51,7 @@ class Problems extends React.Component {
 
     return (
       <div>
+        <DocumentTitle title='numeric'></DocumentTitle>
         <Navbar>
           <Navbar.Header key="brand">
             <Navbar.Brand>

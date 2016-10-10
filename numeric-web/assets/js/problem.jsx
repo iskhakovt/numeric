@@ -8,6 +8,7 @@ import $ from 'jquery-ajax'
 import _ from 'lodash'
 import Baby from 'babyparse'
 import { Grid, Row, Col, Button, Form, FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap'
+import DocumentTitle from 'react-document-title'
 import TeX from 'react-components/js/tex.jsx'
 
 import csrf from './csrf'
@@ -187,6 +188,7 @@ class Problem extends React.Component {
     return (
       <Grid>
         <Row>
+          <DocumentTitle title='Задача'></DocumentTitle>
           <h1><TeX>{this.state.problem.description}</TeX></h1>
           <Col md={6}>
             <Form>
