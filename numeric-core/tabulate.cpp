@@ -22,5 +22,10 @@ Tabulated tabulate(std::function<double(double)> func, const std::vector<double>
 Tabulated tabulate_chebyshev(std::function<double(double)> func, size_t n) {
     std::cout << "tabulate_chebyshev" << std::endl;
 
-    return tabulate(func, {});
+    std::vector<double> y(n);
+    for (size_t i = 0; i != n; ++i) {
+    	y[i] = static_cast<double>(i);
+    }
+
+    return tabulate(func, y);
 }
