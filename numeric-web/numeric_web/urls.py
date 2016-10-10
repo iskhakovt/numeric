@@ -8,6 +8,8 @@ from django.contrib import admin
 from ads import views
 
 
+admin.site.site_header = 'numeric administration'
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index),

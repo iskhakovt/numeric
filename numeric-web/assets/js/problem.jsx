@@ -3,7 +3,7 @@
 
 
 import React from 'react'
-import { Router } from 'react-router'
+import { withRouter } from 'react-router'
 import $ from 'jquery-ajax'
 import _ from 'lodash'
 import Baby from 'babyparse'
@@ -15,7 +15,7 @@ import csrf from './csrf'
 csrf($);
 
 
-class Problem extends React.Component {
+class Problem_ extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
@@ -172,10 +172,8 @@ class Problem extends React.Component {
       '/api/query/' + problemName + '/',
       _.mapValues(this.state.problem.args, (arg, argName) => this.state[argName])
     ).done(
-      (res) => Router.transitionTo('/result/' + res.query)
-    ).fail(
-      alert('Ошибка')
-    );
+      (res) => this.props.router.push('/result/' + res.query)
+    )
   }
 
   render() {
@@ -210,5 +208,13 @@ class Problem extends React.Component {
     );
   }
 }
+
+var Problem = withRouter(Problem_);
+
+Problem_.propTypes = {
+  router: React.PropTypes.shape({
+    push: React.PropTypes.func.isRequired
+  }).isRequired
+};
 
 export default Problem;

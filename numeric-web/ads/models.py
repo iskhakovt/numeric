@@ -16,9 +16,9 @@ QUERY_STATUS = (
 
 class Query(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
-    status = models.CharField(max_length=2, choices=QUERY_STATUS)
-    time = models.FloatField()
-    result = JSONField()
+    status = models.CharField(max_length=2, choices=QUERY_STATUS, default='PE')
+    time = models.FloatField(default=0.0)
+    result = JSONField(default={})
 
     def get_dict(self):
         return {
@@ -29,7 +29,4 @@ class Query(models.Model):
 
     @classmethod
     def create(cls):
-        return cls.objects.create(
-            id = get_random_string(length=32),
-            status='PE'
-        )
+        return cls.objects.create(id = get_random_string(length=32))

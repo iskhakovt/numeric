@@ -16,12 +16,24 @@ class Docker:
         self.func = func
         self.args = args
 
-    @app.task(filter=task_method)
-    def run(self, docker, *args):
+    def fail(self, err):
+        self.query.status = 'FL'
+        self.query.result = {'error', str(err)}
+        self.query.save()
+
+    @app.task(filter=task_method, bind=True)
+    def run(docker, self):
         start = default_timer()
-        res = self.func(self.args)
+        
+        try:
+            res = self.func(self.args)
+        except Exception as err:
+            self.fail(err)
+            return
+
         end = default_timer()
 
+        self.status = 'OK'
         self.query.time = end - start
         self.query.result = res
         self.query.save()
