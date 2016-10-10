@@ -44,6 +44,8 @@ def api_query(request, problemName):
     docker = Docker(query, problem.func, args)
     docker.run.delay()
 
+    return JsonResponse({'query': query.id})
+
 
 def api_result(request, id):
     query = get_object_or_404(Query, id=id)

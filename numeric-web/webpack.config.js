@@ -21,6 +21,7 @@ module.exports = {
 
   module: {
     loaders: [
+      {test: /\.(js)?$/, exclude: /node_modules/, loader: 'babel-loader', query: {presets: ['es2015']}},
       // To transform JSX into JS
       {test: /\.(jsx)?$/, loader: 'babel-loader', query: {presets: ['es2015', 'react']}}
     ],
@@ -31,6 +32,10 @@ module.exports = {
       // Options to be passed through to standard
       parser: 'babel-eslint'
     }
+  },
+
+  node: {
+    fs: 'empty'
   },
 
   resolve: {

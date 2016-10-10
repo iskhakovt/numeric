@@ -3,13 +3,15 @@
 
 
 import React from 'react'
+import { Link } from 'react-router'
 import $ from 'jquery-ajax'
 import _ from 'lodash'
-
-import { Link } from 'react-router'
 import { Nav, Navbar, NavItem } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 import TeX from 'react-components/js/tex.jsx'
+
+import csrf from './csrf'
+csrf($);
 
 
 class Problems extends React.Component {

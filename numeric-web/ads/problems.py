@@ -46,9 +46,9 @@ PROBLEMS = {
         '\\text{Задание функции }\\rho(\\omega)',
         '\\text{Задание функции }\\rho(\\omega) = a\\omega(b - \\omega)',
         {
-            'a': ProblemArgument('a', False),
-            'b': ProblemArgument('b', False),
-            'n': ProblemArgument('\text{Количество точек}', False)
+            '1-a': ProblemArgument('a', False),
+            '2-b': ProblemArgument('b', False),
+            '3-n': ProblemArgument('\\text{Количество точек}', False)
         },
         tabulate
     ),
@@ -56,8 +56,8 @@ PROBLEMS = {
         '\\text{Табулирование интеграла}',
         '\\text{Табулирование интеграла }\\int\\limits_y^1 \\rho(\\omega) \\operatorname{d}\\!{\\omega} = U(y)',
         {
-            'rho': ProblemArgument('\\rho(\\omega)', True),
-            'y': ProblemArgument('y', False)
+            '1-rho': ProblemArgument('\\rho(\\omega)', True),
+            '2-y': ProblemArgument('y', False)
         },
         tabulate_integral
     ),
@@ -65,13 +65,13 @@ PROBLEMS = {
         '\\text{Решение задачи Коши}',
         '\\text{Решение задачи Коши}',
         {
-            'U': ProblemArgument('U(y)', True),
-            'S': ProblemArgument('S(t)', True),
-            'z': ProblemArgument('z(t)', True),
-            'x0': ProblemArgument('x_0', False),
-            'y0': ProblemArgument('x_0', False),
-            'beta': ProblemArgument('\\beta', False),
-            'T': ProblemArgument('T', False),
+            '1-U': ProblemArgument('U(y)', True),
+            '2-S': ProblemArgument('S(t)', True),
+            '3-z': ProblemArgument('z(t)', True),
+            '4-x0': ProblemArgument('x_0', False),
+            '5-y0': ProblemArgument('y_0', False),
+            '6-beta': ProblemArgument('\\beta', False),
+            '7-T': ProblemArgument('T', False),
         },
         None
     )
