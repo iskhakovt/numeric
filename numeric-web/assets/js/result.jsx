@@ -6,7 +6,7 @@ import React from 'react'
 import $ from 'jquery-ajax'
 import _ from 'lodash'
 import Baby from 'babyparse'
-import { Grid, Row, Alert, Well, Button } from 'react-bootstrap'
+import { Grid, Row, Alert, Well, Button, Label } from 'react-bootstrap'
 import DocumentTitle from 'react-document-title'
 import Plotly from 'react-plotlyjs'
 import TeX from 'react-components/js/tex.jsx'
@@ -89,7 +89,14 @@ class Result extends React.Component {
   }
 
   getResult(data, key) {
-    if (data.type === 'text') {
+    if (data.type === 'title') {
+      return (
+        <div key={key}>
+          <h1><TeX>{data.data}</TeX></h1>
+          <hr />
+        </div>
+      );
+    } else if (data.type === 'text') {
       return (
         <h4 key={key}><TeX>{data.data}</TeX></h4>
       );
@@ -153,6 +160,9 @@ class Result extends React.Component {
     return (
       <Grid>
         <Row>
+          <Label bsStyle="success">
+            {'(' + this.state.time.toFixed(2) + ' seconds)'}
+          </Label>
           <DocumentTitle title='Результаты'></DocumentTitle>
           {
             _.map(this.state.result, (res, key) => this.getResult(res, key))

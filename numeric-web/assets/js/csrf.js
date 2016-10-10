@@ -11,9 +11,9 @@ function csrfSafeMethod(method) {
 }
 
 function csrf($) {
-  var csrftoken = Cookies.get('csrftoken');
+  var csrftoken = Cookies.get('csrfmiddlewaretoken');
   if (!csrftoken) {
-    csrftoken = $('#csrftoken').val();
+    csrftoken = $('[name=csrfmiddlewaretoken]').val();
   }
 
   $.ajaxSetup({

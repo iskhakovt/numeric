@@ -18,8 +18,10 @@
     >
 </head>
 <body>
+    {% csrf_token %}
+
     <div id="root"></div>
-    <input type="hidden" id="csrftoken" value="{% csrf_token %}" />
+
 
     {% render_bundle 'main' %}
 

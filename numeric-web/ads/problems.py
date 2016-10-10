@@ -42,7 +42,7 @@ def tabulate(args):
 
     return [
         {
-            'type': 'text',
+            'type': 'title',
             'data': '\\text{Задание функции }\\rho(\\omega) = ' + \
                 str(round(a, 2)) + \
                 '\\omega(' + str(round(b, 2)) + \
@@ -67,7 +67,7 @@ def tabulate_integral(args):
 
     return [
         {
-            'type': 'text',
+            'type': 'title',
             'data': '\\text{Табулирование интеграла}'
         },
         {'type': 'function', 'description': '\\rho(\\omega)', 'data': ret}
@@ -82,7 +82,7 @@ def cauchy(args):
 
     return [
         {
-            'type': 'text',
+            'type': 'title',
             'data': '\\text{Решение задачи Коши}'
         },
         {'type': 'function', 'description': 'f', 'data': ret}
