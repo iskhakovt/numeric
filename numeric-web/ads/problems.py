@@ -63,7 +63,7 @@ def tabulate(args):
 
 
 def tabulate_integral(args):
-    ret = numeric.tabulate_integral(args['1-rho'])
+    ret = numeric.tabulate_integral(*args['1-rho'])
 
     return [
         {
