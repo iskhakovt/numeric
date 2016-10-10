@@ -5,6 +5,7 @@
 #include "../core.hpp"
 
 #include <Python.h>
+#include <cmath>
 
 
 static PyObject *evalFunc = nullptr;
@@ -12,6 +13,12 @@ static PyObject *evalFunc = nullptr;
 static double call_func(double arg) {
     PyObject *args = PyTuple_Pack(1, PyFloat_FromDouble(arg));
     PyObject *result = PyObject_CallObject(evalFunc, args);
+
+    if (!result) {
+        PyErr_SetString(PyExc_RuntimeError, "call_func error");
+        return nan("");
+    }
+
     return PyFloat_AsDouble(result);
 }
 
@@ -33,21 +40,37 @@ static PyObject * tabulated_to_py(const Tabulated &func) {
     return PyTuple_Pack(2, x, y);
 }
 
-static std::vector<double> py_to_vector(PyObject *list) {
-    std::vector<double> arr(static_cast<size_t>(PyList_Size(list)));
-
-    for (size_t i = 0; i != arr.size(); ++i) {
-        arr[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
+static bool py_to_vector(PyObject *list, std::vector<double> *ret) {
+    if (!PyList_Check(list)) {
+        PyErr_SetObject(PyExc_TypeError, list);
+        return false;
     }
 
-    return arr;
+    ret->resize(static_cast<size_t>(PyList_Size(list)));
+
+    for (size_t i = 0; i != ret->size(); ++i) {
+        if (!PyFloat_Check(PyList_GetItem(list, i))) {
+        PyErr_SetObject(PyExc_TypeError, PyList_GetItem(list, i));
+            return false;
+        }
+        (*ret)[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
+    }
+
+    return true;
 }
 
-static Tabulated py_to_tabulated(PyObject *tuple) {
-    PyObject *x, *y;
-    PyArg_ParseTuple(tuple, "O!O!", &PyList_Type, &x, &PyList_Type, &y);
+static bool py_to_tabulated(PyObject *listX, PyObject *listY, Tabulated *ret) {
+    std::vector<double> x, y;
+    if (!py_to_vector(listX, &x) || !py_to_vector(listY, &y)) {
+        return false;
+    }
 
-    return Tabulated({py_to_vector(x), py_to_vector(y)});
+    if (x.size() != y.size()) {
+        PyErr_SetString(PyExc_ValueError, "lists have different sizes");
+    }
+
+    *ret = Tabulated({x, y});
+    return true;
 }
 
 
@@ -61,7 +84,17 @@ static PyObject * numeric_tabulate(PyObject *, PyObject *args)  {
 }
 
 static PyObject * numeric_tabulate_integral(PyObject *, PyObject *args) {
-    return tabulated_to_py(tabulate_integral(py_to_tabulated(args)));
+    PyObject *x, *y = nullptr;
+    if (!PyArg_ParseTuple(args, "O!O!", &PyList_Type, &x, &PyList_Type, &y)) {
+        return nullptr;
+    }
+
+    Tabulated ret;
+    if (!py_to_tabulated(x, y, &ret)) {
+        return nullptr;
+    }
+
+    return tabulated_to_py(tabulate_integral(ret));
 }
 
 

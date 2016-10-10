@@ -5,10 +5,11 @@
 cmake_minimum_required(VERSION 3.0)
 
 
+find_package(PythonLibs 3 REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
-include_directories(..)
-link_directories(..)
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ..)
 
 set(SOURCE_FILES numericmodule.cpp)
 

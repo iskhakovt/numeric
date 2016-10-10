@@ -11,9 +11,6 @@ if (APPLE)
 endif (APPLE)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -Werror")
-find_package(PythonLibs 3 REQUIRED)
-
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY .)
 
 
 set(SOURCE_FILES tabulate.cpp tabulate_integral.cpp)
