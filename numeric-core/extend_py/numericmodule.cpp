@@ -67,9 +67,28 @@ static bool py_to_tabulated(PyObject *listX, PyObject *listY, Tabulated *ret) {
 
     if (x.size() != y.size()) {
         PyErr_SetString(PyExc_ValueError, "lists have different sizes");
+        return false;
     }
 
     *ret = Tabulated({x, y});
+    return true;
+}
+
+
+static bool py_to_model(PyObject *args, ModelArguments *retArgs, double *beta) {
+    PyObject *u_x = nullptr, *u_y = nullptr, *s_x = nullptr, *s_y = nullptr, *z_x = nullptr, *z_y = nullptr;
+    double x_0, y_0, t;
+
+    if (beta) {
+        if (!PyArg_ParseTuple(args, "O!O!O!O!O!O!dddd", u_x, u_y, s_x, s_y, z_x, z_y, &x_0, &y_0, &t, &beta)) {
+            return false;
+        }
+    } else {
+        if (!PyArg_ParseTuple(args, "O!O!O!O!O!O!ddd", u_x, u_y, s_x, s_y, z_x, z_y, &x_0, &y_0, &t)) {
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -97,14 +116,25 @@ static PyObject * numeric_tabulate_integral(PyObject *, PyObject *args) {
     return tabulated_to_py(tabulate_integral(ret));
 }
 
+static PyObject * numeric_model(PyObject *, PyObject *args) {
+    ModelArguments modelArgs;
+    double beta;
+
+    if (!py_to_model(args, &modelArgs, &beta)) {
+        return nullptr;
+    }
+
+    return tabulated_to_py(solve_model(modelArgs, beta));
+}
+
 
 
 static PyMethodDef NumericMethods[] = {
         {"tabulate",  numeric_tabulate, METH_VARARGS, "tabulate"},
         {"tabulate_integral",  numeric_tabulate_integral, METH_VARARGS, "tabulate integral"},
+        {"cauchy",  numeric_model, METH_VARARGS, "cauchy"},
         {nullptr, nullptr, 0, nullptr} /* Sentinel */
 };
-
 
 static struct PyModuleDef numericmodule = {
         PyModuleDef_HEAD_INIT,

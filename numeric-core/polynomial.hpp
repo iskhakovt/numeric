@@ -9,7 +9,7 @@
 #include <vector>
 
 
-class Polynomial {
+struct Polynomial {
     std::vector<double> coefs;
 };
 

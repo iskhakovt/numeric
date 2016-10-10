@@ -13,7 +13,15 @@ endif (APPLE)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -Werror")
 
 
-set(SOURCE_FILES tabulate.cpp tabulate_integral.cpp)
+set(
+	SOURCE_FILES
+	tabulate.cpp
+	interpolate.cpp
+	tabulate_integral.cpp
+	linear_system.cpp
+	differential_equation.cpp
+	model.cpp
+)
 
 add_library(numeric-core SHARED ${SOURCE_FILES})
 

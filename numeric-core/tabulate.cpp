@@ -16,8 +16,9 @@ Tabulated tabulate(std::function<double(double)> func, const std::vector<double>
         func_val[i] = func(grid[i]);
     }
 
-    return {grid, func_val};
+    return Tabulated(grid, func_val);
 }
+
 
 Tabulated tabulate_chebyshev(std::function<double(double)> func, size_t n) {
     std::cout << "tabulate_chebyshev" << std::endl;

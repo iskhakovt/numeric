@@ -11,6 +11,17 @@
 
 struct Tabulated {
     std::vector<double> x, y;
+
+    Tabulated() {}
+    Tabulated(const std::vector<double> &x, const std::vector<double> &y) : x(x), y(y) {
+        if (x.size() != y.size()) {
+            throw "tabluated different sizes";
+        }
+    }
+
+    double get_size() const { return x.size(); }
+
+    double get_value(double) const { return 0.0; }
 };
 
 
