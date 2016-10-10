@@ -1,9 +1,12 @@
 
 ## Setting up
 
-1. Install Python packages
+1. Set up virtualenv
   ```bash
-pip3 install -r requirements.txt # pip if you use Python 3 by default
+python3 -m venv venv
+. venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
 2. Install JS packages
@@ -11,7 +14,7 @@ pip3 install -r requirements.txt # pip if you use Python 3 by default
 npm install
 ```
 
-3. Set up a DB
+3. Set up database
   ```bash
 ./manage.py makemigrations
 ./manage.py migrate
