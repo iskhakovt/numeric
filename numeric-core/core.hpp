@@ -32,7 +32,7 @@ extern Tabulated differential_equation(const ModelArguments &, double);
 
 extern Tabulated solve_model(const ModelArguments &, double);
 
-extern Tabulated beta_search(const ModelArguments &);
+extern double beta_search(const ModelArguments &);
 
 
 #endif //NUMERIC_CORE_CORE_HPP

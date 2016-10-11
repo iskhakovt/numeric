@@ -70,14 +70,19 @@ def tabulate_integral(args):
             'type': 'title',
             'data': '\\text{Табулирование интеграла}'
         },
-        {'type': 'function', 'description': '\\rho(\\omega)', 'data': ret}
+        {
+            'type': 'function',
+            'description': '\\rho(\\omega)',
+            'filename': 'result',
+            'data': ret
+        }
     ]
 
 
 def cauchy(args):
     ret = numeric.cauchy(
         args['1-U'], args['2-S'], args['3-z'],
-        args['4-x0'], args['5-y0'], args['6-beta'], args['7-T']
+        args['4-x0'], args['5-y0'], args['6-T'], args['7-beta']
     )
 
     return [
@@ -85,8 +90,43 @@ def cauchy(args):
             'type': 'title',
             'data': '\\text{Решение задачи Коши}'
         },
-        {'type': 'function', 'description': 'f', 'data': ret}
+        {
+            'type': 'function',
+            'description': 'f',
+            'filename': 'result',
+            'data': ret
+        }
     ]
+
+
+def beta_search(args):
+    beta = numeric.beta_search(
+        args['1-U'], args['2-S'], args['3-z'],
+        args['4-x0'], args['5-y0'], args['6-T']
+    )
+
+    model = numeric.cauchy(
+        args['1-U'], args['2-S'], args['3-z'],
+        args['4-x0'], args['5-y0'], args['6-T'], beta
+    )
+
+    return [
+        {
+            'type': 'title',
+            'data': '\\beta Search'
+        },
+        {
+            'type': 'text',
+            'data': '\\beta=' + str(beta)
+        },
+        {
+            'type': 'function',
+            'description': 'f',
+            'filename': 'result',
+            'data': model
+        }
+    ]
+
 
 
 PROBLEMS = {
@@ -117,9 +157,22 @@ PROBLEMS = {
             '3-z': ProblemArgument('z(t)', True),
             '4-x0': ProblemArgument('x_0', False),
             '5-y0': ProblemArgument('y_0', False),
-            '6-beta': ProblemArgument('\\beta', False),
-            '7-T': ProblemArgument('T', False),
+            '6-T': ProblemArgument('T', False),
+            '7-beta': ProblemArgument('\\beta', False),
         },
         cauchy
+    ),
+    '4-beta-search': Problem(
+        '\\beta Search',
+        '\\beta Search',
+        {
+            '1-U': ProblemArgument('U(y)', True),
+            '2-S': ProblemArgument('S(t)', True),
+            '3-z': ProblemArgument('z(t)', True),
+            '4-x0': ProblemArgument('x_0', False),
+            '5-y0': ProblemArgument('y_0', False),
+            '6-T': ProblemArgument('T', False),
+        },
+        beta_search
     )
 }

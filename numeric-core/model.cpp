@@ -14,9 +14,9 @@ Tabulated solve_model(const ModelArguments &args, double beta) {
 }
 
 
-Tabulated beta_search(const ModelArguments &args) {
+double beta_search(const ModelArguments &args) {
     std::cerr << "beta_search" << std::endl;
 
-    return {};
+    return 0.0;
 }
 

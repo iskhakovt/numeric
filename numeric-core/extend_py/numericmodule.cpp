@@ -99,9 +99,9 @@ static bool py_to_model(PyObject *args, ModelArguments *retArgs, double *beta) {
         if (!PyArg_ParseTuple(
             args,
             "O!O!O!ddd",
-            &PyList_Type, &uTuple,
-            &PyList_Type, &sTuple,
-            &PyList_Type, &zTuple,
+            &PyTuple_Type, &uTuple,
+            &PyTuple_Type, &sTuple,
+            &PyTuple_Type, &zTuple,
             &x_0, &y_0, &t)
         ) {
             return false;
@@ -159,12 +159,22 @@ static PyObject * numeric_model(PyObject *, PyObject *args) {
     return tabulated_to_py(solve_model(modelArgs, beta));
 }
 
+static PyObject * numeric_beta_search(PyObject *, PyObject *args) {
+    ModelArguments modelArgs;
+    if (!py_to_model(args, &modelArgs, nullptr)) {
+        return nullptr;
+    }
+
+    return PyFloat_FromDouble(beta_search(modelArgs));
+}
+
 
 
 static PyMethodDef NumericMethods[] = {
         {"tabulate",  numeric_tabulate, METH_VARARGS, "tabulate"},
         {"tabulate_integral",  numeric_tabulate_integral, METH_VARARGS, "tabulate integral"},
         {"cauchy",  numeric_model, METH_VARARGS, "cauchy"},
+        {"beta_search",  numeric_beta_search, METH_VARARGS, "beta search"},
         {nullptr, nullptr, 0, nullptr} /* Sentinel */
 };
 
