@@ -72,7 +72,7 @@ def tabulate_integral(args):
         },
         {
             'type': 'function',
-            'description': '\\rho(\\omega)',
+            'description': 'result',
             'filename': 'result',
             'data': ret
         }
