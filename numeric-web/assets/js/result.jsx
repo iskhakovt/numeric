@@ -80,12 +80,14 @@ class Result extends React.Component {
     }
 
     let csvContent = Baby.unparse(array);
-    let file = new File(
-      [csvContent],
+    saveAs(
+      new Blob(
+        [csvContent],
+        {type: 'text/csv;charset=US-ASCII'}
+      ),
       filename + '.csv',
-      {type: 'text/csv;charset=utf-8'}
+      true
     );
-    saveAs(file);
   }
 
   getResult(data, key) {
