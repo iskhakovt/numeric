@@ -24,6 +24,8 @@ extern Tabulated tabulate_chebyshev(std::function<double(double)>, size_t);
 
 extern Polynomial interpolate(const Tabulated &);
 
+extern double integral(const Tabulated &, double);
+
 extern Tabulated tabulate_integral(const Tabulated &);
 
 extern std::vector<double> linear_system(const Matrix &, const std::vector<double> &);

@@ -17,7 +17,7 @@ set(
 	SOURCE_FILES
 	tabulate.cpp
 	interpolate.cpp
-	tabulate_integral.cpp
+	integral.cpp
 	linear_system.cpp
 	differential_equation.cpp
 	model.cpp
