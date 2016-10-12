@@ -126,46 +126,66 @@ static bool py_to_model(PyObject *args, ModelArguments *retArgs, double *beta) {
 
 
 static PyObject * numeric_tabulate(PyObject *, PyObject *args)  {
-    Py_ssize_t n;
-    if (!PyArg_ParseTuple(args, "On", &evalFunc, &n)) {
+    try {
+        Py_ssize_t n;
+        if (!PyArg_ParseTuple(args, "On", &evalFunc, &n)) {
+            return nullptr;
+        }
+
+        return tabulated_to_py(tabulate_chebyshev(call_func, static_cast<size_t>(n)));
+    } catch (std::exception &err) {
+        PyErr_SetString(PyExc_RuntimeError, err.what());
         return nullptr;
     }
-
-    return tabulated_to_py(tabulate_chebyshev(call_func, static_cast<size_t>(n)));
 }
 
 static PyObject * numeric_tabulate_integral(PyObject *, PyObject *args) {
-    PyObject *funcTuple;
-    if (!PyArg_ParseTuple(args, "O!", &PyTuple_Type, &funcTuple)) {
+    try {
+        PyObject *funcTuple;
+        if (!PyArg_ParseTuple(args, "O!", &PyTuple_Type, &funcTuple)) {
+            return nullptr;
+        }
+
+        Tabulated func;
+        if (!py_to_tabulated(funcTuple, &func)) {
+            return nullptr;
+        }
+
+        return tabulated_to_py(tabulate_integral(func));
+    } catch (std::exception &err) {
+        PyErr_SetString(PyExc_RuntimeError, err.what());
         return nullptr;
     }
-
-    Tabulated func;
-    if (!py_to_tabulated(funcTuple, &func)) {
-        return nullptr;
-    }
-
-    return tabulated_to_py(tabulate_integral(func));
 }
 
 static PyObject * numeric_model(PyObject *, PyObject *args) {
-    ModelArguments modelArgs;
-    double beta;
+    try {
+        ModelArguments modelArgs;
+        double beta;
 
-    if (!py_to_model(args, &modelArgs, &beta)) {
+        if (!py_to_model(args, &modelArgs, &beta)) {
+            return nullptr;
+        }
+
+        return tabulated_to_py(solve_model(modelArgs, beta));
+    } catch (std::exception &err) {
+        PyErr_SetString(PyExc_RuntimeError, err.what());
         return nullptr;
     }
-
-    return tabulated_to_py(solve_model(modelArgs, beta));
 }
 
 static PyObject * numeric_beta_search(PyObject *, PyObject *args) {
-    ModelArguments modelArgs;
-    if (!py_to_model(args, &modelArgs, nullptr)) {
+    try {
+        ModelArguments modelArgs;
+        if (!py_to_model(args, &modelArgs, nullptr)) {
+            return nullptr;
+        }
+
+        return PyFloat_FromDouble(beta_search(modelArgs));
+    } catch (std::exception &err) {
+        PyErr_SetString(PyExc_RuntimeError, err.what());
         return nullptr;
     }
-
-    return PyFloat_FromDouble(beta_search(modelArgs));
 }
 
 

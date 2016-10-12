@@ -6,6 +6,7 @@
 #define NUMERIC_CORE_TABULATED_FUNCTION_HPP
 
 
+#include <stdexcept>
 #include <vector>
 
 
@@ -15,7 +16,7 @@ struct Tabulated {
     Tabulated() {}
     Tabulated(const std::vector<double> &x, const std::vector<double> &y) : x(x), y(y) {
         if (x.size() != y.size()) {
-            throw "tabluated different sizes";
+            throw std::invalid_argument("tabluated different sizes");
         }
     }
 

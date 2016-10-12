@@ -6,6 +6,7 @@
 #define NUMERIC_LOGIC_MATRIX_HPP
 
 
+#include <stdexcept>
 #include <vector>
 
 
@@ -16,7 +17,7 @@ struct Matrix {
     Matrix(std::vector<std::vector<double>> const &matrix) : matrix(matrix) {
         for (auto const & row : matrix) {
             if (row.size() != matrix.front().size()) {
-                throw "matrix row different sizes";
+                throw std::invalid_argument("matrix row different sizes");
             }
         }
     }

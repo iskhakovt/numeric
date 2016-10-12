@@ -10,7 +10,7 @@ if (APPLE)
     set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
 endif (APPLE)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -Werror")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -O3 -Wall -Werror -fPIC -fstack-protector -fstack-protector-all -Wl,--export-dynamic -Wl,-E")
 
 
 set(
@@ -23,7 +23,7 @@ set(
 	model.cpp
 )
 
-add_library(numeric-core SHARED ${SOURCE_FILES})
+add_library(numeric-core STATIC ${SOURCE_FILES})
 
 set_target_properties(numeric-core PROPERTIES PREFIX "")
 target_link_libraries(numeric-core)

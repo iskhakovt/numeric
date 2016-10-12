@@ -6,6 +6,8 @@
 #define NUMERIC_LOGIC_POLYNOMIAL_HPP
 
 
+#include <stdexcept>
+
 #include <vector>
 
 
