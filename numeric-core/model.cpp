@@ -7,16 +7,21 @@
 
 #include <iostream>
 
-Tabulated solve_model(const ModelArguments &args, double beta) {
+template <class Real>
+Tabulated<Real> solve_model(const ModelArguments<Real> &args, Real beta) {
     std::cerr << "solve_model" << std::endl;
 
     return {};
 }
 
 
-double beta_search(const ModelArguments &args) {
+template <class Real>
+Real beta_search(const ModelArguments<Real> &args) {
     std::cerr << "beta_search" << std::endl;
 
     return 0.0;
 }
 
+
+template Tabulated<double> solve_model(const ModelArguments<double> &, double);
+template double beta_search(const ModelArguments<double> &);

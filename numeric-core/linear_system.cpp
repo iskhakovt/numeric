@@ -7,8 +7,13 @@
 
 #include <iostream>
 
-std::vector<double> linear_system(const Matrix &a, const std::vector<double> &b) {
+template <class Real>
+std::vector<Real> linear_system(const Matrix<Real> &a, const std::vector<Real> &b) {
     std::cerr << "linear_system" << std::endl;
 
     return {};
 }
+
+
+
+template std::vector<double> linear_system(const Matrix<double> &, const std::vector<double> &);

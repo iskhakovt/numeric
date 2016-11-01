@@ -6,13 +6,12 @@
 #define NUMERIC_LOGIC_POLYNOMIAL_HPP
 
 
-#include <stdexcept>
-
 #include <vector>
 
 
+template <class Real>
 struct Polynomial {
-    std::vector<double> coefs;
+    std::vector<Real> coefs;
 };
 
 

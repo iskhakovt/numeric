@@ -8,19 +8,24 @@
 #include <cmath>
 
 
-static PyObject *evalFunc = nullptr;
+class PyFunction : public Function<double> {
+    PyObject *evalFunc;
 
-static double call_func(double arg) {
-    PyObject *args = PyTuple_Pack(1, PyFloat_FromDouble(arg));
-    PyObject *result = PyObject_CallObject(evalFunc, args);
+public:
+    PyFunction(PyObject *evalFunc) : evalFunc(evalFunc) {}
 
-    if (!result) {
-        PyErr_SetString(PyExc_RuntimeError, "call_func error");
-        return nan("");
+    double operator()(double arg) const override {
+        PyObject *args = PyTuple_Pack(1, PyFloat_FromDouble(arg));
+        PyObject *result = PyObject_CallObject(evalFunc, args);
+
+        if (!result) {
+            PyErr_SetString(PyExc_RuntimeError, "PyFunction error");
+            return nan("");
+        }
+
+        return PyFloat_AsDouble(result);
     }
-
-    return PyFloat_AsDouble(result);
-}
+};
 
 
 static PyObject * vector_to_py(const std::vector<double> &arr) {
@@ -33,7 +38,7 @@ static PyObject * vector_to_py(const std::vector<double> &arr) {
     return list;
 }
 
-static PyObject * tabulated_to_py(const Tabulated &func) {
+static PyObject * tabulated_to_py(const Tabulated<double> &func) {
     PyObject *x = vector_to_py(func.x);
     PyObject *y = vector_to_py(func.y);
 
@@ -59,7 +64,7 @@ static bool py_to_vector(PyObject *list, std::vector<double> *ret) {
     return true;
 }
 
-static bool py_to_tabulated(PyObject *func, Tabulated *ret) {
+static bool py_to_tabulated(PyObject *func, Tabulated<double> *ret) {
     PyObject *listX = nullptr, *listY = nullptr;
     if (!PyArg_ParseTuple(func, "O!O!", &PyList_Type, &listX, &PyList_Type, &listY)) {
         return false;
@@ -75,12 +80,12 @@ static bool py_to_tabulated(PyObject *func, Tabulated *ret) {
         return false;
     }
 
-    *ret = Tabulated({x, y});
+    *ret = Tabulated<double>({x, y});
     return true;
 }
 
 
-static bool py_to_model(PyObject *args, ModelArguments *retArgs, double *beta) {
+static bool py_to_model(PyObject *args, ModelArguments<double> *retArgs, double *beta) {
     PyObject *uTuple = nullptr, *sTuple = nullptr, *zTuple = nullptr;
     double x_0, y_0, t;
 
@@ -108,7 +113,7 @@ static bool py_to_model(PyObject *args, ModelArguments *retArgs, double *beta) {
         }
     }
 
-    Tabulated u, s, z;
+    Tabulated<double> u, s, z;
 
     if (!py_to_tabulated(uTuple, &u)) {
         return false;
@@ -120,19 +125,20 @@ static bool py_to_model(PyObject *args, ModelArguments *retArgs, double *beta) {
         return false;
     }
 
-    *retArgs = ModelArguments(u, s, z, x_0, y_0, t);
+    *retArgs = ModelArguments<double>(u, s, z, x_0, y_0, t);
     return true;
 }
 
 
 static PyObject * numeric_tabulate(PyObject *, PyObject *args)  {
     try {
+        PyObject *evalFunc;
         Py_ssize_t n;
         if (!PyArg_ParseTuple(args, "On", &evalFunc, &n)) {
             return nullptr;
         }
 
-        return tabulated_to_py(tabulate_chebyshev(call_func, static_cast<size_t>(n)));
+        return tabulated_to_py(tabulate_chebyshev(PyFunction(evalFunc), static_cast<size_t>(n)));
     } catch (std::exception &err) {
         PyErr_SetString(PyExc_RuntimeError, err.what());
         return nullptr;
@@ -146,7 +152,7 @@ static PyObject * numeric_tabulate_integral(PyObject *, PyObject *args) {
             return nullptr;
         }
 
-        Tabulated func;
+        Tabulated<double> func;
         if (!py_to_tabulated(funcTuple, &func)) {
             return nullptr;
         }
@@ -160,7 +166,7 @@ static PyObject * numeric_tabulate_integral(PyObject *, PyObject *args) {
 
 static PyObject * numeric_model(PyObject *, PyObject *args) {
     try {
-        ModelArguments modelArgs;
+        ModelArguments<double> modelArgs;
         double beta;
 
         if (!py_to_model(args, &modelArgs, &beta)) {
@@ -176,7 +182,7 @@ static PyObject * numeric_model(PyObject *, PyObject *args) {
 
 static PyObject * numeric_beta_search(PyObject *, PyObject *args) {
     try {
-        ModelArguments modelArgs;
+        ModelArguments<double> modelArgs;
         if (!py_to_model(args, &modelArgs, nullptr)) {
             return nullptr;
         }
@@ -189,9 +195,29 @@ static PyObject * numeric_beta_search(PyObject *, PyObject *args) {
 }
 
 
+static PyObject * numeric_intergal(PyObject *, PyObject *args) {
+    try {
+        PyObject *evalFunc;
+        double a, b;
+        Py_ssize_t n;
+        if (!PyArg_ParseTuple(args, "Oddn", &evalFunc, &a, &b, &n)) {
+            return nullptr;
+        }
+
+        return PyTuple_Pack(2,
+            PyFloat_FromDouble(integral_gauss_kronrod(PyFunction(evalFunc), a, b, n)),
+            PyFloat_FromDouble(integral_simpson(PyFunction(evalFunc), a, b, n))
+        );
+    } catch (std::exception &err) {
+        PyErr_SetString(PyExc_RuntimeError, err.what());
+        return nullptr;
+    }
+}
+
 
 static PyMethodDef NumericMethods[] = {
         {"tabulate",  numeric_tabulate, METH_VARARGS, "tabulate"},
+        {"integral",  numeric_intergal, METH_VARARGS, "integral"},
         {"tabulate_integral",  numeric_tabulate_integral, METH_VARARGS, "tabulate integral"},
         {"cauchy",  numeric_model, METH_VARARGS, "cauchy"},
         {"beta_search",  numeric_beta_search, METH_VARARGS, "beta search"},

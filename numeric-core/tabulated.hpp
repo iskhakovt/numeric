@@ -2,28 +2,31 @@
 // Distributed under the terms of the MIT License.
 
 
-#ifndef NUMERIC_CORE_TABULATED_FUNCTION_HPP
-#define NUMERIC_CORE_TABULATED_FUNCTION_HPP
+#ifndef NUMERIC_CORE_TABULATED_HPP
+#define NUMERIC_CORE_TABULATED_HPP
 
+
+#include "function.hpp"
 
 #include <stdexcept>
 #include <vector>
 
 
-struct Tabulated {
-    std::vector<double> x, y;
+template <class Real>
+struct Tabulated : public Function<Real> {
+    std::vector<Real> x, y;
 
     Tabulated() {}
-    Tabulated(const std::vector<double> &x, const std::vector<double> &y) : x(x), y(y) {
+    Tabulated(const std::vector<Real> &x, const std::vector<Real> &y) : x(x), y(y) {
         if (x.size() != y.size()) {
             throw std::invalid_argument("tabluated different sizes");
         }
     }
 
-    double get_size() const { return x.size(); }
+    Real get_size() const { return x.size(); }
 
-    double get_value(double) const { return 0.0; }
+    Real operator()(Real) const override { return 0.0; }
 };
 
 
-#endif //NUMERIC_CORE_TABULATED_FUNCTION_HPP
+#endif //NUMERIC_CORE_TABULATED_HPP

@@ -7,8 +7,12 @@
 
 #include <iostream>
 
-Polynomial interpolate(const Tabulated &func) {
+template <class Real>
+Polynomial<Real> interpolate(const Tabulated<Real> &func) {
     std::cerr << "interpolate" << std::endl;
 
     return {};
 }
+
+
+template Polynomial<double> interpolate(const Tabulated<double> &);

@@ -10,11 +10,12 @@
 #include <vector>
 
 
+template <class Real>
 struct Matrix {
-    std::vector<std::vector<double>> matrix;
+    std::vector<std::vector<Real>> matrix;
 
     Matrix() {}
-    Matrix(std::vector<std::vector<double>> const &matrix) : matrix(matrix) {
+    Matrix(std::vector<std::vector<Real>> const &matrix) : matrix(matrix) {
         for (auto const & row : matrix) {
             if (row.size() != matrix.front().size()) {
                 throw std::invalid_argument("matrix row different sizes");

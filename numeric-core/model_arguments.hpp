@@ -10,22 +10,24 @@
 
 #include <stdexcept>
 
+
+template <class Real>
 struct ModelArguments {
-    Tabulated u;
-    Tabulated s;
-    Tabulated z;
-    double x0;
-    double y0;
-    double t;
+    Tabulated<Real> u;
+    Tabulated<Real> s;
+    Tabulated<Real> z;
+    Real x0;
+    Real y0;
+    Real t;
 
     ModelArguments() {}
     ModelArguments(
-        const Tabulated &u,
-		const Tabulated &s,
-		const Tabulated &z,
-		double x0,
-		double y0,
-		double t
+        const Tabulated<Real> &u,
+		const Tabulated<Real> &s,
+		const Tabulated<Real> &z,
+		Real x0,
+		Real y0,
+		Real t
 	) : u(u), s(s), z(z), x0(x0), y0(y0), t(t) {
         if (u.get_size() != s.get_size() || s.x != z.x) {
             throw std::invalid_argument("Bad model arguments");
