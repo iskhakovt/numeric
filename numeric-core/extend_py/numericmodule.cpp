@@ -145,6 +145,38 @@ static PyObject * numeric_tabulate(PyObject *, PyObject *args)  {
     }
 }
 
+static PyObject * numeric_integral_gauss_kronrod(PyObject *, PyObject *args) {
+    try {
+        PyObject *evalFunc;
+        double a, b;
+        Py_ssize_t n;
+        if (!PyArg_ParseTuple(args, "Oddn", &evalFunc, &a, &b, &n)) {
+            return nullptr;
+        }
+
+        return PyFloat_FromDouble(integral_gauss_kronrod(PyFunction(evalFunc), a, b, n));
+    } catch (std::exception &err) {
+        PyErr_SetString(PyExc_RuntimeError, err.what());
+        return nullptr;
+    }
+}
+
+static PyObject * numeric_integral_simpson(PyObject *, PyObject *args) {
+    try {
+        PyObject *evalFunc;
+        double a, b;
+        Py_ssize_t n;
+        if (!PyArg_ParseTuple(args, "Oddn", &evalFunc, &a, &b, &n)) {
+            return nullptr;
+        }
+
+        return PyFloat_FromDouble(integral_simpson(PyFunction(evalFunc), a, b, n));
+    } catch (std::exception &err) {
+        PyErr_SetString(PyExc_RuntimeError, err.what());
+        return nullptr;
+    }
+}
+
 static PyObject * numeric_tabulate_integral(PyObject *, PyObject *args) {
     try {
         PyObject *funcTuple;
@@ -195,29 +227,10 @@ static PyObject * numeric_beta_search(PyObject *, PyObject *args) {
 }
 
 
-static PyObject * numeric_intergal(PyObject *, PyObject *args) {
-    try {
-        PyObject *evalFunc;
-        double a, b;
-        Py_ssize_t n;
-        if (!PyArg_ParseTuple(args, "Oddn", &evalFunc, &a, &b, &n)) {
-            return nullptr;
-        }
-
-        return PyTuple_Pack(2,
-            PyFloat_FromDouble(integral_gauss_kronrod(PyFunction(evalFunc), a, b, n)),
-            PyFloat_FromDouble(integral_simpson(PyFunction(evalFunc), a, b, n))
-        );
-    } catch (std::exception &err) {
-        PyErr_SetString(PyExc_RuntimeError, err.what());
-        return nullptr;
-    }
-}
-
-
 static PyMethodDef NumericMethods[] = {
         {"tabulate",  numeric_tabulate, METH_VARARGS, "tabulate"},
-        {"integral",  numeric_intergal, METH_VARARGS, "integral"},
+        {"integral_gauss_kronrod",  numeric_integral_gauss_kronrod, METH_VARARGS, "integral_gauss_kronrod"},
+        {"integral_simpson",  numeric_integral_simpson, METH_VARARGS, "integral_simpson"},
         {"tabulate_integral",  numeric_tabulate_integral, METH_VARARGS, "tabulate integral"},
         {"cauchy",  numeric_model, METH_VARARGS, "cauchy"},
         {"beta_search",  numeric_beta_search, METH_VARARGS, "beta search"},

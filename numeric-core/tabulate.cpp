@@ -25,6 +25,18 @@ Tabulated<Real> tabulate(const Function<Real> &func, const std::vector<Real> &gr
 
 
 template <class Real>
+std::vector<Real> linspace(size_t n, Real a, Real b) {
+    std::vector<Real> ret(n);
+
+    for (size_t i = 0; i != n; ++i) {
+        ret[i] = a + (b - a) / (n - 1) * i;
+    }
+
+    return ret;
+}
+
+
+template <class Real>
 std::vector<Real> chebyshev_roots(size_t n, Real a, Real b) {
     std::vector<Real> roots(n);
 
@@ -46,5 +58,6 @@ Tabulated<Real> tabulate_chebyshev(const Function<Real> &func, size_t n) {
 
 
 template Tabulated<double> tabulate(const Function<double> &, const std::vector<double> &);
+template std::vector<double> linspace(size_t, double, double);
 template std::vector<double> chebyshev_roots(size_t, double, double);
 template Tabulated<double> tabulate_chebyshev(const Function<double> &, size_t);

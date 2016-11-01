@@ -38,12 +38,13 @@ template <class Real>
 Real integral_simpson(const Function<Real> &func, Real a, Real b, size_t n) {
     std::cerr << "integral simpson" << std::endl;
 
-    if (n < 2) throw std::invalid_argument("Simpson too low grid size");
+    if (n < 3) throw std::invalid_argument("Simpson too low grid size");
 
     Real result = 0.0;
 
     n = (n + 1) / 2;
-    std::vector<Real> x = chebyshev_roots(n, a, b);
+    std::vector<Real> x = linspace(n, a, b);
+
     Real lastVal = func(x[0]);
 
     for (size_t i = 1; i != n; ++i) {
