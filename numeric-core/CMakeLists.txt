@@ -10,7 +10,7 @@ if (APPLE)
     set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
 endif (APPLE)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -O3 -lm -Wall -fPIC -fstack-protector -fstack-protector-all -Wl,--export-dynamic -Wl,-E -static-libstdc++")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -O3 -lm -Wall -Werror -fPIC -fstack-protector -fstack-protector-all -Wl,--export-dynamic -Wl,-E -static-libstdc++")
 
 
 set(
