@@ -6,7 +6,7 @@
 ## Modules:
 
 * `numeric-core` — computation implemented in C++
-* `numeric-web`— UI implemented in Django and ReactJS
+* `numeric-web` — UI implemented in Django and ReactJS
 
 ## Deploy:
 
