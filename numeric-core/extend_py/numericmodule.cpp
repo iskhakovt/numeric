@@ -75,15 +75,38 @@ static bool py_to_tabulated(PyObject *func, Tabulated<double> *ret) {
         return false;
     }
 
-    if (x.size() != y.size()) {
-        PyErr_SetString(PyExc_ValueError, "lists have different sizes");
+    try {
+        *ret = Tabulated<double>({x, y});
+    } catch (std::invalid_argument) {
+        PyErr_SetString(PyExc_ValueError, "invalid tabulated format");
         return false;
     }
 
-    *ret = Tabulated<double>({x, y});
     return true;
 }
 
+static bool py_to_matrix(PyObject *matrix, Matrix<double> *ret) {
+    if (!PyList_Check(matrix)) {
+        PyErr_SetObject(PyExc_TypeError, matrix);
+        return false;
+    }
+
+    std::vector<std::vector<double>> ret_matrix(static_cast<size_t>(PyList_Size(matrix)));
+    for (size_t i = 0; i != ret_matrix.size(); ++i) {
+        if (!py_to_vector(PyList_GetItem(matrix, i), &ret_matrix[i])) {
+            return false;
+        }
+    }
+
+    try {
+        *ret = Matrix<double>(ret_matrix);
+    } catch (std::invalid_argument) {
+        PyErr_SetString(PyExc_ValueError, "invalid matrix format");
+        return false;
+    }
+
+    return true;
+}
 
 static bool py_to_model(PyObject *args, ModelArguments<double> *retArgs, double *beta) {
     PyObject *uTuple = nullptr, *sTuple = nullptr, *zTuple = nullptr;
@@ -196,6 +219,29 @@ static PyObject * numeric_tabulate_integral(PyObject *, PyObject *args) {
     }
 }
 
+static PyObject * numeric_gaussian_elimination(PyObject *, PyObject *args) {
+    try {
+        PyObject *py_matrix, *py_vector;
+        if (!PyArg_ParseTuple(args, "O!O!", &PyList_Type, &py_matrix, &PyList_Type, &py_vector)) {
+            return nullptr;
+        }
+
+        Matrix<double> matrix;
+        if (!py_to_matrix(py_matrix, &matrix)) {
+            return nullptr;
+        }
+        std::vector<double> vector;
+        if (!py_to_vector(py_vector, &vector)) {
+            return nullptr;
+        }
+
+        return vector_to_py(gaussian_elimination(matrix, vector));
+    } catch (std::exception &err) {
+        PyErr_SetString(PyExc_RuntimeError, err.what());
+        return nullptr;
+    }
+}
+
 static PyObject * numeric_model(PyObject *, PyObject *args) {
     try {
         ModelArguments<double> modelArgs;
@@ -232,6 +278,7 @@ static PyMethodDef NumericMethods[] = {
         {"integral_gauss_kronrod",  numeric_integral_gauss_kronrod, METH_VARARGS, "integral_gauss_kronrod"},
         {"integral_simpson",  numeric_integral_simpson, METH_VARARGS, "integral_simpson"},
         {"tabulate_integral",  numeric_tabulate_integral, METH_VARARGS, "tabulate integral"},
+        {"gaussian_elimination",  numeric_gaussian_elimination, METH_VARARGS, "gaussian_elimination"},
         {"cauchy",  numeric_model, METH_VARARGS, "cauchy"},
         {"beta_search",  numeric_beta_search, METH_VARARGS, "beta search"},
         {nullptr, nullptr, 0, nullptr} /* Sentinel */

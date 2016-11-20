@@ -14,13 +14,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -O3 -lm -Wall -Werror -fPIC -
 
 
 set(
-	SOURCE_FILES
-	tabulate.cpp
-	interpolate.cpp
-	integral.cpp
-	linear_system.cpp
-	differential_equation.cpp
-	model.cpp
+    SOURCE_FILES
+    tabulate.cpp
+    interpolate.cpp
+    integral.cpp
+    linear_system.cpp
+    differential_equation.cpp
+    model.cpp
+    real.cpp
 )
 
 add_library(numeric-core STATIC ${SOURCE_FILES})

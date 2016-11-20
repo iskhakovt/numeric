@@ -50,6 +50,9 @@ template <class Real>
 std::vector<Real> linear_system(const Matrix<Real> &, const std::vector<Real> &);
 
 template <class Real>
+std::vector<Real> gaussian_elimination(const Matrix<Real> &, const std::vector<Real> &);
+
+template <class Real>
 Tabulated<Real> differential_equation(const ModelArguments<Real> &, Real);
 
 template <class Real>
@@ -57,6 +60,10 @@ Tabulated<Real> solve_model(const ModelArguments<Real> &, Real);
 
 template <class Real>
 Real beta_search(const ModelArguments<Real> &);
+
+
+template <class Real>
+bool equal(Real x, Real y = 0.0);
 
 
 #endif //NUMERIC_CORE_CORE_HPP
