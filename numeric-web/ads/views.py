@@ -48,7 +48,6 @@ def api_query(request, problemName):
     except (TypeError, IndexError, KeyError, ValueError, AssertionError):
         return HttpResponseBadRequest()
 
-
     query = Query.create(problemName, args)
     query.save()
 

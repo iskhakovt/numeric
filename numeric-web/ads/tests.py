@@ -2,4 +2,4 @@
 # Distributed under the terms of the MIT License.
 
 
-from django.test import TestCase
+# from django.test import TestCase

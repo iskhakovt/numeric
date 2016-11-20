@@ -37,16 +37,15 @@ def tabulate(args):
     b = float(args['2-b'])
     n = int(args['3-n'])
 
-    func = lambda x: a * x * (b - x)
-    ret = numeric.tabulate(func, n)
+    ret = numeric.tabulate(lambda x: a * x * (b - x), n)
 
     return [
         {
             'type': 'title',
-            'data': '\\text{Задание функции }\\rho(\\omega) = ' + \
-                str(round(a, 2)) + \
-                '\\omega(' + str(round(b, 2)) + \
-                ' - \\omega)'
+            'data': '\\text{Задание функции }\\rho(\\omega) = ' +
+                    str(round(a, 2)) +
+                    '\\omega(' + str(round(b, 2)) +
+                    ' - \\omega)'
         },
         {
             'type': 'function',
@@ -126,7 +125,6 @@ def beta_search(args):
             'data': model
         }
     ]
-
 
 
 PROBLEMS = {
