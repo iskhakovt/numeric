@@ -111,5 +111,42 @@ ForwardIt max_absolute_element(ForwardIt begin, ForwardIt end) {
 }
 
 
+template <class Real>
+std::vector<Real> tridiagonal_thomas(
+    const std::vector<Real> &A,
+    const std::vector<Real> &C,
+    const std::vector<Real> &B,
+    const std::vector<Real> &F)
+{
+    if (A.size() != C.size() || A.size() != B.size() || A.size() != F.size()) {
+        throw std::invalid_argument("Invalid tridiagonal argument sizes");
+    }
+
+    size_t n = A.size();
+
+    std::vector<Real> alpha(n), beta(n);
+    alpha[0] = 0.0;
+    beta[0] = 0.0;
+
+    Real z;
+    for (size_t i = 1; i != n; ++i) {
+        z = (A[i - 1] * alpha[i - 1] + C[i - 1]);
+        alpha[i] = -B[i - 1] / z;
+        beta[i] = (F[i - 1] - A[i - 1] * beta[i - 1]) / z;
+    }
+
+    std::vector<Real> ret(n);
+    ret[n - 1] = (F[n - 1] - A[n - 1] * beta[n - 1]) / (C[n - 1] + A[n - 1] * alpha[n - 1]);
+
+    for (ssize_t i = n - 2; i >= 0; --i) {
+        ret[i] = alpha[i + 1] * ret[i + 1] + beta[i + 1];
+    }
+
+    return ret;
+}
+
+
 template std::vector<double> linear_system(const Matrix<double> &, const std::vector<double> &);
 template std::vector<double> gaussian_elimination(const Matrix<double> &, const std::vector<double> &);
+template std::vector<double> tridiagonal_thomas(const std::vector<double> &, const std::vector<double> &,
+    const std::vector<double> &, const std::vector<double> &);

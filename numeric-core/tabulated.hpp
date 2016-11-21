@@ -23,9 +23,13 @@ struct Tabulated : public Function<Real> {
         }
     }
 
-    Real get_size() const { return x.size(); }
+    size_t size() const {
+        return x.size();
+    }
 
-    Real operator()(Real) const override { return 0.0; }
+    Real operator()(Real) const override {
+        return 0.0;
+    }
 };
 
 

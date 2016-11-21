@@ -6,6 +6,7 @@
 #define NUMERIC_CORE_CORE_HPP
 
 
+#include "cubic_spline.hpp"
 #include "function.hpp"
 #include "matrix.hpp"
 #include "model_arguments.hpp"
@@ -23,13 +24,16 @@ template <class Real>
 Tabulated<Real> tabulate(const Function<Real> &, const std::vector<Real> &);
 
 template <class Real>
-std::vector<Real> linspace(size_t n, Real a, Real b);
+std::vector<Real> linspace(Real, Real, size_t);
 
 template <class Real>
-std::vector<Real> chebyshev_roots(size_t, Real, Real);
+std::vector<Real> chebyshev_roots(Real, Real, size_t);
 
 template <class Real>
-Tabulated<Real> tabulate_chebyshev(const Function<Real> &, size_t);
+Tabulated<Real> tabulate_linspace(const Function<Real> &, Real, Real, size_t);
+
+template <class Real>
+Tabulated<Real> tabulate_chebyshev(const Function<Real> &, Real, Real, size_t);
 
 template <class Real>
 Polynomial<Real> interpolate(const Tabulated<Real> &);
@@ -51,6 +55,10 @@ std::vector<Real> linear_system(const Matrix<Real> &, const std::vector<Real> &)
 
 template <class Real>
 std::vector<Real> gaussian_elimination(const Matrix<Real> &, const std::vector<Real> &);
+
+template <class Real> std::vector<Real> tridiagonal_thomas(
+    const std::vector<Real> &, const std::vector<Real> &,
+    const std::vector<Real> &, const std::vector<Real> &);
 
 template <class Real>
 Tabulated<Real> differential_equation(const ModelArguments<Real> &, Real);

@@ -153,15 +153,53 @@ static bool py_to_model(PyObject *args, ModelArguments<double> *retArgs, double 
 }
 
 
-static PyObject * numeric_tabulate(PyObject *, PyObject *args)  {
+static PyObject * numeric_tabulate_linspace(PyObject *, PyObject *args) {
     try {
         PyObject *evalFunc;
+        double a, b;
         Py_ssize_t n;
-        if (!PyArg_ParseTuple(args, "On", &evalFunc, &n)) {
+        if (!PyArg_ParseTuple(args, "Oddn", &evalFunc, &a, &b, &n)) {
             return nullptr;
         }
 
-        return tabulated_to_py(tabulate_chebyshev(PyFunction(evalFunc), static_cast<size_t>(n)));
+        return tabulated_to_py(tabulate_linspace(PyFunction(evalFunc), a, b, static_cast<size_t>(n)));
+    } catch (std::exception &err) {
+        PyErr_SetString(PyExc_RuntimeError, err.what());
+        return nullptr;
+    }
+}
+
+static PyObject * numeric_tabulate_chebyshev(PyObject *, PyObject *args) {
+    try {
+        PyObject *evalFunc;
+        double a, b;
+        Py_ssize_t n;
+        if (!PyArg_ParseTuple(args, "Oddn", &evalFunc, &a, &b, &n)) {
+            return nullptr;
+        }
+
+        return tabulated_to_py(tabulate_chebyshev(PyFunction(evalFunc), a, b, static_cast<size_t>(n)));
+    } catch (std::exception &err) {
+        PyErr_SetString(PyExc_RuntimeError, err.what());
+        return nullptr;
+    }
+}
+
+static PyObject * numeric_tabulate_spline(PyObject *, PyObject *args) {
+    try {
+        PyObject *funcTuple;
+        double a, b;
+        Py_ssize_t n;
+        if (!PyArg_ParseTuple(args, "Oddn", &funcTuple, &a, &b, &n)) {
+            return nullptr;
+        }
+
+        Tabulated<double> func;
+        if (!py_to_tabulated(funcTuple, &func)) {
+            return nullptr;
+        }
+
+        return tabulated_to_py(CubicSpline<double>::tabulate_spline(func, a, b, static_cast<size_t>(n)));
     } catch (std::exception &err) {
         PyErr_SetString(PyExc_RuntimeError, err.what());
         return nullptr;
@@ -227,11 +265,8 @@ static PyObject * numeric_gaussian_elimination(PyObject *, PyObject *args) {
         }
 
         Matrix<double> matrix;
-        if (!py_to_matrix(py_matrix, &matrix)) {
-            return nullptr;
-        }
         std::vector<double> vector;
-        if (!py_to_vector(py_vector, &vector)) {
+        if (!py_to_matrix(py_matrix, &matrix) || !py_to_vector(py_vector, &vector)) {
             return nullptr;
         }
 
@@ -241,6 +276,29 @@ static PyObject * numeric_gaussian_elimination(PyObject *, PyObject *args) {
         return nullptr;
     }
 }
+
+static PyObject * numeric_tridiagonal_thomas(PyObject *, PyObject *args) {
+    try {
+        PyObject *py_a, *py_c, *py_b, *py_f;
+        if (!PyArg_ParseTuple(args, "O!O!O!O!",
+            &PyList_Type, &py_a, &PyList_Type, &py_c, &PyList_Type, &py_b,
+            &PyList_Type, &py_f)) {
+            return nullptr;
+        }
+
+        std::vector<double> a, c, b, f;;
+        if (!py_to_vector(py_a, &a) || !py_to_vector(py_c, &c) ||
+            !py_to_vector(py_b, &b) || !py_to_vector(py_f, &f)) {
+            return nullptr;
+        }
+
+        return vector_to_py(tridiagonal_thomas(a, c, b, f));
+    } catch (std::exception &err) {
+        PyErr_SetString(PyExc_RuntimeError, err.what());
+        return nullptr;
+    }
+}
+
 
 static PyObject * numeric_model(PyObject *, PyObject *args) {
     try {
@@ -274,11 +332,14 @@ static PyObject * numeric_beta_search(PyObject *, PyObject *args) {
 
 
 static PyMethodDef NumericMethods[] = {
-        {"tabulate",  numeric_tabulate, METH_VARARGS, "tabulate"},
+        {"tabulate_linspace", numeric_tabulate_linspace, METH_VARARGS, "tabulate_linspace"},
+        {"tabulate_chebyshev",  numeric_tabulate_chebyshev, METH_VARARGS, "tabulate_chebyshev"},
+        {"tabulate_spline",  numeric_tabulate_spline, METH_VARARGS, "tabulate_spline"},
         {"integral_gauss_kronrod",  numeric_integral_gauss_kronrod, METH_VARARGS, "integral_gauss_kronrod"},
         {"integral_simpson",  numeric_integral_simpson, METH_VARARGS, "integral_simpson"},
         {"tabulate_integral",  numeric_tabulate_integral, METH_VARARGS, "tabulate integral"},
         {"gaussian_elimination",  numeric_gaussian_elimination, METH_VARARGS, "gaussian_elimination"},
+        {"tridiagonal_thomas",  numeric_tridiagonal_thomas, METH_VARARGS, "tridiagonal_thomas"},
         {"cauchy",  numeric_model, METH_VARARGS, "cauchy"},
         {"beta_search",  numeric_beta_search, METH_VARARGS, "beta search"},
         {nullptr, nullptr, 0, nullptr} /* Sentinel */

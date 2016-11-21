@@ -37,7 +37,7 @@ def tabulate(args):
     b = float(args['2-b'])
     n = int(args['3-n'])
 
-    ret = numeric.tabulate(lambda x: a * x * (b - x), n)
+    ret = numeric.tabulate_chebyshev(lambda x: a * x * (b - x), -1.0, 1.0, n)
 
     return [
         {
