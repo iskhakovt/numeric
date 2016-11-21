@@ -14,7 +14,6 @@ Real integral(const Function<Real> &func, Real a, Real b) {
 
 
 template <class Real>
-
 Real integral_gauss_kronrod(const Function<Real> &func, Real a, Real b, size_t n) {
     if (n < 3) throw std::invalid_argument("Gauss-Kronrod too low grid size");
     if (n % 4 == 1 || n % 4 == 2) n -= 2;

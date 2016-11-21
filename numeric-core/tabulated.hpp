@@ -17,11 +17,7 @@ struct Tabulated : public Function<Real> {
     std::vector<Real> x, y;
 
     Tabulated() {}
-    Tabulated(const std::vector<Real> &x, const std::vector<Real> &y) : x(x), y(y) {
-        if (x.size() != y.size()) {
-            throw std::invalid_argument("tabluated different sizes");
-        }
-    }
+    Tabulated(const std::vector<Real> &, const std::vector<Real> &);
 
     size_t size() const {
         return x.size();
