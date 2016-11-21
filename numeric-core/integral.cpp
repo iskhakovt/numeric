@@ -7,12 +7,8 @@
 #include "gauss-kronrod.hpp"
 
 
-#include <iostream>
-
 template <class Real>
 Real integral(const Function<Real> &func, Real a, Real b) {
-    std::cerr << "integral" << std::endl;
-
     return integral_gauss_kronrod(func, a, b, 61);
 }
 
@@ -20,8 +16,6 @@ Real integral(const Function<Real> &func, Real a, Real b) {
 template <class Real>
 
 Real integral_gauss_kronrod(const Function<Real> &func, Real a, Real b, size_t n) {
-    std::cerr << "integral Gauss-Kronrod" << std::endl;
-
     if (n < 3) throw std::invalid_argument("Gauss-Kronrod too low grid size");
     if (n % 4 == 1 || n % 4 == 2) n -= 2;
 
@@ -36,8 +30,6 @@ Real integral_gauss_kronrod(const Function<Real> &func, Real a, Real b, size_t n
 
 template <class Real>
 Real integral_simpson(const Function<Real> &func, Real a, Real b, size_t n) {
-    std::cerr << "integral simpson" << std::endl;
-
     if (n < 3) throw std::invalid_argument("Simpson too low grid size");
 
     Real result = 0.0;
@@ -59,8 +51,6 @@ Real integral_simpson(const Function<Real> &func, Real a, Real b, size_t n) {
 
 template <class Real>
 Tabulated<Real> tabulate_integral(const Function<Real> &func) {
-    std::cerr << "tabulate_integral" << std::endl;
-
     std::vector<Real> x(GRID_SIZE), y(GRID_SIZE);
 
     for (size_t i = 0; i <= GRID_SIZE; ++i) {

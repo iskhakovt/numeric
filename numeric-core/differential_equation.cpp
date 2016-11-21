@@ -5,19 +5,13 @@
 #include "core.hpp"
 
 
-#include <iostream>
-
 template <class Real>
 Tabulated<Real> differential_equation(const ModelArguments<Real> &args, Real beta) {
-    std::cerr << "differential_equation" << std::endl;
-
     return {};
 }
 
 template <class Real>
 Tabulated<Real> differential_equation(const Tabulated<Real> &func, Real x0, Real y0, Real T) {
-    std::cerr << "differential_equation" << std::endl;
-
     std::vector<Real> x, y;
 
     for (size_t i = 0; i != GRID_SIZE; ++i) {

@@ -7,12 +7,8 @@
 #include <stdexcept>
 
 
-#include <iostream>
-
 template <class Real>
 std::vector<Real> linear_system(const Matrix<Real> &a, const std::vector<Real> &b) {
-    std::cerr << "linear_system" << std::endl;
-
     return {};
 }
 
@@ -36,8 +32,6 @@ ForwardIt max_absolute_element(ForwardIt, ForwardIt);
 
 template <class Real>
 std::vector<Real> gaussian_elimination(const Matrix<Real> &_M, const std::vector<Real> &_b) {
-	std::cerr << "gaussian_elimination" << std::endl;
-
 	if (_M.size() != _b.size()) {
 		throw std::invalid_argument("matrix row size is not equal to vector");
 	}

@@ -8,12 +8,8 @@
 #include <cmath>
 
 
-#include <iostream>
-
 template <class Real>
 Tabulated<Real> tabulate(const Function<Real> &func, const std::vector<Real> &grid) {
-    std::cout << "tabulate" << std::endl;
-
     std::vector<Real> func_val(grid.size());
 
     for (size_t i = 0; i != grid.size(); ++i) {
@@ -57,8 +53,6 @@ std::vector<Real> chebyshev_roots(Real a, Real b, size_t n) {
 
 template <class Real>
 Tabulated<Real> tabulate_chebyshev(const Function<Real> &func, Real a, Real b, size_t n) {
-    std::cout << "tabulate_chebyshev" << std::endl;
-
     return tabulate(func, chebyshev_roots(-1.0, 1.0, n));
 }
 
