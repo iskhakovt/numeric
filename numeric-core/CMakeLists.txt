@@ -16,12 +16,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -O3 -lm -Wall -Werror -fPIC -
 set(
     SOURCE_FILES
     cubic_spline.cpp
+    differential_equation.cpp
     tabulate.cpp
     interpolate.cpp
     integral.cpp
     linear_system.cpp
-    differential_equation.cpp
     model.cpp
+    polynomial.cpp
     real.cpp
 )
 
