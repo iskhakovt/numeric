@@ -9,12 +9,12 @@
 template <class Real>
 Tabulated<Real>::Tabulated(const std::vector<Real> &x, const std::vector<Real> &y) : x(x), y(y) {
     if (x.size() != y.size()) {
-        throw std::invalid_argument("tabluated different sizes");
+        throw std::invalid_argument("Tabulated::Tabulated: tabluated different sizes");
     }
 
     for (size_t i = 1; i != y.size(); ++i) {
         if (x[i] < x[i - 1] || equal(x[i], x[i - 1])) {
-            throw std::invalid_argument("grid must be sorted and unique");
+            throw std::invalid_argument("Tabulated::Tabulated: grid must be sorted and unique");
         }
     }
 }

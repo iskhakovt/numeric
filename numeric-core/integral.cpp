@@ -15,7 +15,7 @@ Real integral(const Function<Real> &func, Real a, Real b) {
 
 template <class Real>
 Real integral_gauss_kronrod(const Function<Real> &func, Real a, Real b, size_t n) {
-    if (n < 3) throw std::invalid_argument("Gauss-Kronrod too low grid size");
+    if (n < 3) throw std::invalid_argument("integral_gauss_kronrod: too low grid size");
     if (n % 4 == 1 || n % 4 == 2) n -= 2;
 
     GaussKronrod<Real> GK((n - 1) / 2);
@@ -29,7 +29,7 @@ Real integral_gauss_kronrod(const Function<Real> &func, Real a, Real b, size_t n
 
 template <class Real>
 Real integral_simpson(const Function<Real> &func, Real a, Real b, size_t n) {
-    if (n < 3) throw std::invalid_argument("Simpson too low grid size");
+    if (n < 3) throw std::invalid_argument("integral_simpson: too low grid size");
 
     Real result = 0.0;
 

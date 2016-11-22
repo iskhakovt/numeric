@@ -30,7 +30,7 @@ struct ModelArguments {
 		Real t
 	) : u(u), s(s), z(z), x0(x0), y0(y0), t(t) {
         if (u.size() != s.size() || s.x != z.x) {
-            throw std::invalid_argument("Bad model arguments");
+            throw std::invalid_argument("ModelArguments::ModelArguments: bad model arguments");
         }
     }
 };

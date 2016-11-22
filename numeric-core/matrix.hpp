@@ -19,14 +19,14 @@ struct Matrix {
     Matrix(std::vector<std::vector<Real>> const &matrix) : matrix(matrix) {
         for (auto const & row : matrix) {
             if (row.size() != matrix.front().size()) {
-                throw std::invalid_argument("matrix row different sizes");
+                throw std::invalid_argument("Matrix::Matrix: matrix row different sizes");
             }
         }
     }
 
     std::vector<double> & get_row(size_t idx) {
         if (idx >= size()) {
-            throw std::invalid_argument("no such row");
+            throw std::invalid_argument("Matrix::get_row: invalid index");
         }
 
         return matrix[idx];
@@ -34,7 +34,7 @@ struct Matrix {
 
     const std::vector<double> & get_row(size_t idx) const {
         if (idx >= size()) {
-            throw std::invalid_argument("no such row");
+            throw std::invalid_argument("Matrix::get_row: invalid index");
         }
 
         return matrix[idx];
@@ -42,7 +42,7 @@ struct Matrix {
 
     std::vector<double> get_column(size_t idx) const {
         if (idx >= row_size()) {
-            throw std::invalid_argument("no such row");
+            throw std::invalid_argument("Matrix::get_column: invalid index");
         }
 
         std::vector<Real> ret(size());
