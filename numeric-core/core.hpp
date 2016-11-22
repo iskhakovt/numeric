@@ -56,6 +56,9 @@ std::vector<Real> linear_system(const Matrix<Real> &, const std::vector<Real> &)
 template <class Real>
 std::vector<Real> gaussian_elimination(const Matrix<Real> &, const std::vector<Real> &);
 
+template <class Real>
+std::vector<Real> lu_decomposition(const Matrix<Real> &, const std::vector<Real> &);
+
 template <class Real> std::vector<Real> tridiagonal_thomas(
     const std::vector<Real> &, const std::vector<Real> &,
     const std::vector<Real> &, const std::vector<Real> &);

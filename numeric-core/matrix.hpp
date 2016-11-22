@@ -15,12 +15,21 @@ struct Matrix {
     std::vector<std::vector<Real>> matrix;
 
     Matrix() {}
+    Matrix(size_t n, size_t m) : matrix(n, std::vector<Real>(m, 0.0)) {}
     Matrix(std::vector<std::vector<Real>> const &matrix) : matrix(matrix) {
         for (auto const & row : matrix) {
             if (row.size() != matrix.front().size()) {
                 throw std::invalid_argument("matrix row different sizes");
             }
         }
+    }
+
+    std::vector<double> & get_row(size_t idx) {
+        if (idx >= size()) {
+            throw std::invalid_argument("no such row");
+        }
+
+        return matrix[idx];
     }
 
     const std::vector<double> & get_row(size_t idx) const {
@@ -44,12 +53,32 @@ struct Matrix {
         return ret;
     }
 
+    std::vector<double> & operator[](size_t idx) {
+        return get_row(idx);
+    }
+
+    const std::vector<double> & operator[](size_t idx) const {
+        return get_row(idx);
+    }
+
     size_t size() const {
         return matrix.size();
     }
 
     size_t row_size() const {
         return matrix.front().size();
+    }
+
+    Matrix<Real> transponse() const {
+        std::vector<std::vector<Real>> ret(row_size(), std::vector<Real>(size()));
+
+        for (size_t i = 0; i != size(); ++i) {
+            for (size_t j = 0; j != row_size(); ++j) {
+                ret[j][i] = matrix[i][j];
+            }
+        }
+
+        return Matrix<Real>(ret);
     }
 };
 

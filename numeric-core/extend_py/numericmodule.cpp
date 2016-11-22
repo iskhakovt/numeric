@@ -277,6 +277,26 @@ static PyObject * numeric_gaussian_elimination(PyObject *, PyObject *args) {
     }
 }
 
+static PyObject * numeric_lu_decomposition(PyObject *, PyObject *args) {
+    try {
+        PyObject *py_matrix, *py_vector;
+        if (!PyArg_ParseTuple(args, "O!O!", &PyList_Type, &py_matrix, &PyList_Type, &py_vector)) {
+            return nullptr;
+        }
+
+        Matrix<double> matrix;
+        std::vector<double> vector;
+        if (!py_to_matrix(py_matrix, &matrix) || !py_to_vector(py_vector, &vector)) {
+            return nullptr;
+        }
+
+        return vector_to_py(lu_decomposition(matrix, vector));
+    } catch (std::exception &err) {
+        PyErr_SetString(PyExc_RuntimeError, err.what());
+        return nullptr;
+    }
+}
+
 static PyObject * numeric_tridiagonal_thomas(PyObject *, PyObject *args) {
     try {
         PyObject *py_a, *py_c, *py_b, *py_f;
@@ -339,6 +359,7 @@ static PyMethodDef NumericMethods[] = {
         {"integral_simpson",  numeric_integral_simpson, METH_VARARGS, "integral_simpson"},
         {"tabulate_integral",  numeric_tabulate_integral, METH_VARARGS, "tabulate integral"},
         {"gaussian_elimination",  numeric_gaussian_elimination, METH_VARARGS, "gaussian_elimination"},
+        {"lu_decomposition", numeric_lu_decomposition, METH_VARARGS, "lu_decomposition"},
         {"tridiagonal_thomas",  numeric_tridiagonal_thomas, METH_VARARGS, "tridiagonal_thomas"},
         {"cauchy",  numeric_model, METH_VARARGS, "cauchy"},
         {"beta_search",  numeric_beta_search, METH_VARARGS, "beta search"},

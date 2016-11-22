@@ -7,7 +7,7 @@
 
 
 template <class Real>
-Tabulated::Tabulated(const std::vector<Real> &x, const std::vector<Real> &y) : x(x), y(y) {
+Tabulated<Real>::Tabulated(const std::vector<Real> &x, const std::vector<Real> &y) : x(x), y(y) {
     if (x.size() != y.size()) {
         throw std::invalid_argument("tabluated different sizes");
     }
