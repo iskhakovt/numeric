@@ -22,8 +22,8 @@ class LinearSystemInfiniteSolutions : public LinearSystemException {
 	const char* what() const noexcept override { return "infinite solutions"; }
 };
 
-class LinearSystemNoSolutions : public LinearSystemException {
-	const char* what() const noexcept override { return "no solutions"; }
+class LinearSystemNoSolution : public LinearSystemException {
+	const char* what() const noexcept override { return "no solution"; }
 };
 
 
@@ -75,46 +75,6 @@ std::vector<Real> solve_lower_triangular(const Matrix<Real> &_M, const std::vect
 
 
 template <class Real>
-bool is_linear_dependent(const std::vector<Real> &a, const std::vector<Real> &b) {
-    if (a.size() != b.size()) {
-        throw std::invalid_argument("is_linear_dependent vectors have different sizes");
-    }
-
-    for (size_t i = 1; i != a.size(); ++i) {
-        if (!equal(a[i] * b[0], a[0] * b[i])) {
-            return false;
-        }
-    }
-    return true;
-}
-
-
-template <class Real>
-void build_linear_basis(Matrix<Real> &M, std::vector<Real> &b) {
-    if (M.size() != b.size()) {
-        throw std::invalid_argument("build_linear_basis: matrix row size is not equal to vector");
-    }
-
-    size_t end = M.size();
-    for (size_t i = 0; i != end; ++i) {
-        for (size_t j = 0; j != i; ++j) {
-            if (is_linear_dependent(M.get_row(i), M.get_row(j))) {
-                if (!equal(b[i] * M[j][0], b[j] * M[i][0])) {
-                    throw LinearSystemNoSolutions();
-                }
-
-                std::swap(M[i], M[end - 1]);
-                std::swap(b[i], b[end - 1]);
-                --end;
-                --i;
-                break;
-            }
-        }
-    }
-}
-
-
-template <class Real>
 std::vector<Real> gaussian_elimination(const Matrix<Real> &_M, const std::vector<Real> &_b) {
 	if (_M.size() != _b.size()) {
 		throw std::invalid_argument("gaussian_elimination: matrix size is not equal to vector");
@@ -123,9 +83,7 @@ std::vector<Real> gaussian_elimination(const Matrix<Real> &_M, const std::vector
     auto M = _M;
     auto b = _b;
 
-    build_linear_basis(M, b);
-
-    size_t n = M.row_size();
+    size_t n = M.row_size(), m = M.size();
 
     if (M.size() < n) {
         throw LinearSystemInfiniteSolutions();
@@ -138,11 +96,10 @@ std::vector<Real> gaussian_elimination(const Matrix<Real> &_M, const std::vector
             throw LinearSystemInfiniteSolutions();
         }
 
-
         std::swap(M[next - column.begin()], M[pos]);
         std::swap(b[next - column.begin()], b[pos]);
 
-        for (size_t i = pos + 1; i != n; ++i) {
+        for (size_t i = pos + 1; i != m; ++i) {
             if (equal(M[i][pos])) {
                 continue;
             }
@@ -157,6 +114,12 @@ std::vector<Real> gaussian_elimination(const Matrix<Real> &_M, const std::vector
         }
     }
 
+    for (size_t i = n; i != m; ++i) {
+        if (!equal(b[i])) {
+            throw LinearSystemNoSolution();
+        }
+    }
+
     return solve_upper_triangular(M, b);
 }
 
@@ -167,33 +130,32 @@ std::vector<Real> lu_decomposition(const Matrix<Real> &_M, const std::vector<Rea
         throw std::invalid_argument("lu_decomposition: matrix size is not equal to vector");
     }
 
+    if (_M.size() != _M.row_size()) {
+        throw std::invalid_argument("lu_decomposition: only square matices are supported");
+    }
+
     auto M = _M;
     auto b = _b;
 
-    build_linear_basis(M, b);
-
     size_t n = M.row_size();
-
-    if (M.size() < n) {
-        throw LinearSystemInfiniteSolutions();
-    }
 
     Matrix<Real> L(n, n), U(n, n);
 
     for (size_t pos = 0; pos != n; ++pos) {
-        L[pos][pos] = 1.0;
-
         auto column = M.get_column(pos);
         auto next = max_absolute_element(column.begin() + pos, column.end());
         std::swap(M[next - column.begin()], M[pos]);
         std::swap(b[next - column.begin()], b[pos]);
+    }
+
+    for (size_t pos = 0; pos != n; ++pos) {
+        L[pos][pos] = 1.0;
 
         for (size_t i = 0; i != pos + 1; ++i) {
             U[i][pos] = M[i][pos];
             for (size_t j = 0; j != i; ++j) {
                 U[i][pos] -= U[j][pos] * L[i][j];
             }
-
         }
         if (equal(U[pos][pos])) {
             throw LinearSystemInfiniteSolutions();
@@ -205,9 +167,6 @@ std::vector<Real> lu_decomposition(const Matrix<Real> &_M, const std::vector<Rea
                 L[i][pos] -= U[j][pos] * L[i][j];
             }
             L[i][pos] /= U[pos][pos];
-        }
-        if (equal(L[pos][pos])) {
-            throw LinearSystemInfiniteSolutions();
         }
     }
 
