@@ -3,6 +3,7 @@
 
 
 #include "polynomial.hpp"
+#include "core.hpp"
 
 #include <vector>
 
@@ -60,19 +61,26 @@ void PolynomialNewton<Real>::add_point(Real x, Real y) {
     size_t n = coefs.size();
 
     for (size_t i = 1; i != coefs.size(); ++i) {
-        coefs[i].push_back((coefs[i - 1][n - i] - coefs[i - 1][n - i - 1]) / (y - grid[n - i - 1]));
+        coefs[i].push_back((coefs[i - 1][n - i] - coefs[i - 1][n - i - 1]) / (x - grid[n - i - 1]));
     }
 }
 
 template <class Real>
 Real PolynomialNewton<Real>::operator()(Real x) const {
     Real ret = 0.0;
-    for (size_t i = 0; i != coefs.size(); ++i) {
-        ret = ret * (ret * (x - grid[i]) + coefs[i].front());
+    for (ssize_t i = coefs.size() - 1; i >= 0; --i) {
+        ret = ret * (x - grid[i]) + coefs[i].front();
     }
     return ret;
 }
 
 
+template <class Real>
+Tabulated<Real> tabulate_polynomial(const Tabulated<Real> &func, Real a, Real b, size_t n) {
+    return tabulate_linspace(PolynomialNewton<Real>(func), a, b, n);
+}
+
+
 template class Polynomial<double>;
 template class PolynomialNewton<double>;
+template Tabulated<double> tabulate_polynomial(const Tabulated<double> &, double, double, size_t);

@@ -27,16 +27,16 @@ template <class Real>
 std::vector<Real> linspace(Real, Real, size_t);
 
 template <class Real>
-std::vector<Real> chebyshev_roots(Real, Real, size_t);
-
-template <class Real>
 Tabulated<Real> tabulate_linspace(const Function<Real> &, Real, Real, size_t);
 
 template <class Real>
 Tabulated<Real> tabulate_chebyshev(const Function<Real> &, Real, Real, size_t);
 
 template <class Real>
-Polynomial<Real> interpolate(const Tabulated<Real> &);
+Tabulated<Real> tabulate_polynomial(const Tabulated<Real> &, Real, Real, size_t);
+
+template <class Real>
+Tabulated<Real> tabulate_spline(const Tabulated<Real> &, Real, Real, size_t);
 
 template <class Real>
 Real integral(const Function<Real> &, Real, Real);

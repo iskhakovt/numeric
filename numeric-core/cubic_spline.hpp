@@ -26,8 +26,6 @@ public:
     explicit CubicSpline(const Tabulated<Real> &);
 
     Real operator()(Real) const override;
-
-    static Tabulated<Real> tabulate_spline(const Tabulated<Real> &, double, double, size_t);
 };
 
 

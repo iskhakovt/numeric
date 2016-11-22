@@ -61,18 +61,10 @@ Real CubicSpline<Real>::operator()(Real x) const {
 
 
 template <class Real>
-Tabulated<Real> CubicSpline<Real>::tabulate_spline(const Tabulated<Real> &func, double a, double b, size_t n) {
-    CubicSpline spline(func);
-
-    std::vector<Real> grid = linspace(a, b, n);
-    std::vector<Real> val(n);
-
-    for (size_t i = 0; i != n; ++i) {
-        val[i] = spline(grid[i]);
-    }
-
-    return Tabulated<Real>(grid, val);
+Tabulated<Real> tabulate_spline(const Tabulated<Real> &func, Real a, Real b, size_t n) {
+    return tabulate_linspace(CubicSpline<Real>(func), a, b, n);
 }
 
 
 template class CubicSpline<double>;
+template Tabulated<double> tabulate_spline(const Tabulated<double> &, double, double, size_t);

@@ -19,7 +19,6 @@ set(
     differential_equation.cpp
     tabulate.cpp
     tabulated.cpp
-    interpolate.cpp
     integral.cpp
     linear_system.cpp
     model.cpp

@@ -185,6 +185,27 @@ static PyObject * numeric_tabulate_chebyshev(PyObject *, PyObject *args) {
     }
 }
 
+static PyObject * numeric_tabulate_polynomial(PyObject *, PyObject *args) {
+    try {
+        PyObject *funcTuple;
+        double a, b;
+        Py_ssize_t n;
+        if (!PyArg_ParseTuple(args, "Oddn", &funcTuple, &a, &b, &n)) {
+            return nullptr;
+        }
+
+        Tabulated<double> func;
+        if (!py_to_tabulated(funcTuple, &func)) {
+            return nullptr;
+        }
+
+        return tabulated_to_py(tabulate_polynomial(func, a, b, static_cast<size_t>(n)));
+    } catch (std::exception &err) {
+        PyErr_SetString(PyExc_RuntimeError, err.what());
+        return nullptr;
+    }
+}
+
 static PyObject * numeric_tabulate_spline(PyObject *, PyObject *args) {
     try {
         PyObject *funcTuple;
@@ -199,7 +220,7 @@ static PyObject * numeric_tabulate_spline(PyObject *, PyObject *args) {
             return nullptr;
         }
 
-        return tabulated_to_py(CubicSpline<double>::tabulate_spline(func, a, b, static_cast<size_t>(n)));
+        return tabulated_to_py(tabulate_spline(func, a, b, static_cast<size_t>(n)));
     } catch (std::exception &err) {
         PyErr_SetString(PyExc_RuntimeError, err.what());
         return nullptr;
@@ -354,6 +375,7 @@ static PyObject * numeric_beta_search(PyObject *, PyObject *args) {
 static PyMethodDef NumericMethods[] = {
         {"tabulate_linspace", numeric_tabulate_linspace, METH_VARARGS, "tabulate_linspace"},
         {"tabulate_chebyshev",  numeric_tabulate_chebyshev, METH_VARARGS, "tabulate_chebyshev"},
+        {"tabulate_polynomial",  numeric_tabulate_polynomial, METH_VARARGS, "tabulate_polynomial"},
         {"tabulate_spline",  numeric_tabulate_spline, METH_VARARGS, "tabulate_spline"},
         {"integral_gauss_kronrod",  numeric_integral_gauss_kronrod, METH_VARARGS, "integral_gauss_kronrod"},
         {"integral_simpson",  numeric_integral_simpson, METH_VARARGS, "integral_simpson"},
