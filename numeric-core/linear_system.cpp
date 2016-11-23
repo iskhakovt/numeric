@@ -92,6 +92,7 @@ std::vector<Real> gaussian_elimination(const Matrix<Real> &_M, const std::vector
     for (size_t pos = 0; pos != n; ++pos) {
 		auto column = M.get_column(pos);
         auto next = max_absolute_element(column.begin() + pos, column.end());
+
         if (equal(*next)) {
             throw LinearSystemInfiniteSolutions();
         }
@@ -125,6 +126,45 @@ std::vector<Real> gaussian_elimination(const Matrix<Real> &_M, const std::vector
 
 
 template <class Real>
+void pivot_doolittle(Matrix<Real> &_M, std::vector<Real> &_b) {
+    if (_M.size() != _b.size()) {
+        throw std::invalid_argument("pivot_doolittle: matrix size is not equal to vector");
+    }
+
+    if (_M.size() != _M.row_size()) {
+        throw std::invalid_argument("pivot_doolittle: only square matices are supported");
+    }
+
+    size_t n = _M.size();
+
+    std::vector<size_t> perm(n);
+    for (size_t i = 0; i != n; ++i) {
+        perm[i] = i;
+    }
+
+    for (size_t pos = 0; pos != n; ++pos) {
+        auto column = _M.get_column(pos);
+        auto next = max_absolute_element(column.begin() + pos, column.end());
+
+        if (next - column.begin() != static_cast<ssize_t>(pos)) {
+            std::swap(perm[next - column.begin()], perm[pos]);
+        }
+    }
+
+    auto M = _M;
+    auto b = _b;
+
+    for (size_t i = 0; i != n; ++i) {
+        M[i] = _M[perm[i]];
+        b[i] = _b[perm[i]];
+    }
+
+    _M = M;
+    _b = b;
+}
+
+
+template <class Real>
 std::vector<Real> lu_decomposition(const Matrix<Real> &_M, const std::vector<Real> &_b) {
     if (_M.size() != _b.size()) {
         throw std::invalid_argument("lu_decomposition: matrix size is not equal to vector");
@@ -140,13 +180,7 @@ std::vector<Real> lu_decomposition(const Matrix<Real> &_M, const std::vector<Rea
     size_t n = M.row_size();
 
     Matrix<Real> L(n, n), U(n, n);
-
-    for (size_t pos = 0; pos != n; ++pos) {
-        auto column = M.get_column(pos);
-        auto next = max_absolute_element(column.begin() + pos, column.end());
-        std::swap(M[next - column.begin()], M[pos]);
-        std::swap(b[next - column.begin()], b[pos]);
-    }
+    pivot_doolittle(M, b);
 
     for (size_t pos = 0; pos != n; ++pos) {
         L[pos][pos] = 1.0;
@@ -170,8 +204,7 @@ std::vector<Real> lu_decomposition(const Matrix<Real> &_M, const std::vector<Rea
         }
     }
 
-    auto sub_b = std::vector<Real>(b.begin(), b.begin() + n);
-    return solve_upper_triangular(U, solve_lower_triangular(L, sub_b));
+    return solve_upper_triangular(U, solve_lower_triangular(L, b));
 }
 
 
@@ -214,8 +247,8 @@ template <class ForwardIt>
 ForwardIt max_absolute_element(ForwardIt begin, ForwardIt end) {
     ForwardIt ret = begin;
 
-    for (auto it = begin; it != end; ++it) {
-        if (abs(*it) > abs(*ret)) {
+    for (auto it = std::next(begin); it != end; ++it) {
+        if (std::abs(*it) > std::abs(*ret)) {
             ret = it;
         }
     }
