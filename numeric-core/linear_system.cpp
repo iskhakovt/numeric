@@ -248,7 +248,7 @@ ForwardIt max_absolute_element(ForwardIt begin, ForwardIt end) {
     ForwardIt ret = begin;
 
     for (auto it = std::next(begin); it != end; ++it) {
-        if (std::abs(*it) > std::abs(*ret)) {
+        if (fixed_abs(*it) > fixed_abs(*ret)) {
             ret = it;
         }
     }

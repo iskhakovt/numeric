@@ -2,9 +2,10 @@
 // Distributed under the terms of the MIT License.
 
 
+#include <Python.h>
+
 #include "../core.hpp"
 
-#include <Python.h>
 #include <cmath>
 
 

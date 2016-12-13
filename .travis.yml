@@ -1,0 +1,57 @@
+language: python
+
+python:
+  - 3.5
+
+addons:
+  apt:
+    packages:
+      - g++-6
+      - cmake
+      - cmake-data
+    sources:
+      - ubuntu-toolchain-r-test
+      - kalakris-cmake
+      - george-edison55-precise-backports
+
+env:
+  global:
+    - PIP_USE_MIRRORS=true
+    - TRAVIS_NODE_VERSION="4"
+
+before_install:
+  - export DJANGO_SETTINGS_MODULE=numeric_web.settings
+  - export PYTHONPATH=$HOME/builds/iskhakovt/numeric/numeric-web
+  - export CXX="g++-6"
+  - sudo apt-get -qq update
+  - sudo apt-get install -y build-essential
+  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
+  - pip install --upgrade pip wheel flake8
+
+install:
+  - pip install -r numeric-web/requirements.txt
+  - pip install -r coursework/requirements.txt
+  - pip install -r test/requirements.txt
+  - cd numeric-web
+  - npm install
+  - cd ..
+
+script:
+  - set -e
+  - flake8 --ignore D203,E501 --exclude manage.py,node_modules .
+  - cd numeric-core
+  - cmake CMakeLists.txt
+  - make
+  - cd ../numeric-web
+  - node_modules/.bin/webpack --config webpack.config.js
+  - python manage.py migrate --noinput
+  - python manage.py collectstatic --noinput
+  - python manage.py test
+  - cd ../test
+  - python coursework.py
+  - cd ..
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always

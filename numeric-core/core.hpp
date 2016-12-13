@@ -74,6 +74,9 @@ Real beta_search(const ModelArguments<Real> &);
 
 
 template <class Real>
+Real fixed_abs(Real x);
+
+template <class Real>
 bool equal(Real x, Real y = 0.0);
 
 

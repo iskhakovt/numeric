@@ -2,8 +2,10 @@
 // Distributed under the terms of the MIT License.
 
 
-#include <cmath>
-
+template <class Real>
+Real fixed_abs(Real x) {
+    return x < Real(0) ? -x : x;
+}
 
 template <class Real>
 bool equal(Real x, Real y) {
@@ -11,8 +13,9 @@ bool equal(Real x, Real y) {
 }
 
 template<> bool equal(double x, double y) {
-    return std::abs(x - y) < 1e-16;
+    return fixed_abs(x - y) < 1e-16;
 }
 
 
+template double fixed_abs(double);
 template bool equal(double, double);
