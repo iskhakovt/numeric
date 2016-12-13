@@ -12,4 +12,10 @@ struct Function {
 };
 
 
+template <class Real>
+struct FunctionThreeArg {
+    virtual Real operator()(Real, Real, Real) const = 0;
+};
+
+
 #endif //NUMERIC_CORE_FUNCTION_HPP

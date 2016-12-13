@@ -15,8 +15,28 @@ class PyFunction : public Function<double> {
 public:
     PyFunction(PyObject *evalFunc) : evalFunc(evalFunc) {}
 
-    double operator()(double arg) const override {
-        PyObject *args = PyTuple_Pack(1, PyFloat_FromDouble(arg));
+    double operator()(double x) const override {
+        PyObject *args = PyTuple_Pack(1, PyFloat_FromDouble(x));
+        PyObject *result = PyObject_CallObject(evalFunc, args);
+
+        if (!result) {
+            PyErr_SetString(PyExc_RuntimeError, "PyFunction error");
+            return nan("");
+        }
+
+        return PyFloat_AsDouble(result);
+    }
+};
+
+class PyFunctionThreeArg : public FunctionThreeArg<double> {
+    PyObject *evalFunc;
+
+public:
+    PyFunctionThreeArg(PyObject *evalFunc) : evalFunc(evalFunc) {}
+
+    double operator()(double x, double y, double z) const override {
+        PyObject *args = PyTuple_Pack(3,
+            PyFloat_FromDouble(x), PyFloat_FromDouble(y), PyFloat_FromDouble(z));
         PyObject *result = PyObject_CallObject(evalFunc, args);
 
         if (!result) {
@@ -341,6 +361,25 @@ static PyObject * numeric_tridiagonal_thomas(PyObject *, PyObject *args) {
     }
 }
 
+static PyObject * numeric_runge_kutta(PyObject *, PyObject *args) {
+    try {
+        PyObject *py_f, *py_g;
+        double x0, y0, T;
+        ssize_t n;
+        if (!PyArg_ParseTuple(args, "OOdddn", &py_f, &py_g, &x0, &y0, &T, &n)) {
+            return nullptr;
+        }
+
+        auto ret = runge_kutta(PyFunctionThreeArg(py_f), PyFunctionThreeArg(py_g),
+            x0, y0, T, static_cast<size_t>(n));
+
+        return PyTuple_Pack(2, tabulated_to_py(ret.first), tabulated_to_py(ret.second));
+    } catch (std::exception &err) {
+        PyErr_SetString(PyExc_RuntimeError, err.what());
+        return nullptr;
+    }
+}
+
 
 static PyObject * numeric_model(PyObject *, PyObject *args) {
     try {
@@ -384,6 +423,7 @@ static PyMethodDef NumericMethods[] = {
         {"gaussian_elimination",  numeric_gaussian_elimination, METH_VARARGS, "gaussian_elimination"},
         {"lu_decomposition", numeric_lu_decomposition, METH_VARARGS, "lu_decomposition"},
         {"tridiagonal_thomas",  numeric_tridiagonal_thomas, METH_VARARGS, "tridiagonal_thomas"},
+        {"runge_kutta",  numeric_runge_kutta, METH_VARARGS, "runge_kutta"},
         {"cauchy",  numeric_model, METH_VARARGS, "cauchy"},
         {"beta_search",  numeric_beta_search, METH_VARARGS, "beta search"},
         {nullptr, nullptr, 0, nullptr} /* Sentinel */

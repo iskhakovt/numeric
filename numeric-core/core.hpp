@@ -59,12 +59,14 @@ std::vector<Real> gaussian_elimination(const Matrix<Real> &, const std::vector<R
 template <class Real>
 std::vector<Real> lu_decomposition(const Matrix<Real> &, const std::vector<Real> &);
 
-template <class Real> std::vector<Real> tridiagonal_thomas(
+template <class Real>
+std::vector<Real> tridiagonal_thomas(
     const std::vector<Real> &, const std::vector<Real> &,
     const std::vector<Real> &, const std::vector<Real> &);
 
 template <class Real>
-Tabulated<Real> differential_equation(const ModelArguments<Real> &, Real);
+std::pair<Tabulated<Real>, Tabulated<Real>> runge_kutta(
+    const FunctionThreeArg<Real> &, const FunctionThreeArg<Real> &, Real, Real, Real, size_t);
 
 template <class Real>
 Tabulated<Real> solve_model(const ModelArguments<Real> &, Real);
