@@ -59,7 +59,7 @@ class Problem_ extends React.Component {
     ).done(
       (res) => this.initProblem(res)
     ).fail(
-      () => this.load()
+      () => this.load(problem)
     );
   }
 
