@@ -64,7 +64,7 @@ class Result extends React.Component {
         });
 
         if (res.status === 'PE') {
-          this.load(id);
+          setTimeout(() => this.load(id), 500);
         }
       }
     ).fail(

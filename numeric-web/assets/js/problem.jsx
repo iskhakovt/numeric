@@ -7,7 +7,7 @@ import { withRouter } from 'react-router'
 import $ from 'jquery-ajax'
 import _ from 'lodash'
 import Baby from 'babyparse'
-import { Grid, Row, Col, Button, Form, FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap'
+import { Grid, Row, Col, Button, Form, FormGroup, ControlLabel, FormControl, HelpBlock, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import DocumentTitle from 'react-document-title'
 import TeX from 'react-components/js/tex.jsx'
 
@@ -136,17 +136,36 @@ class Problem_ extends React.Component {
     if (arg.isFunction) {
       return (
         <FormGroup
-          controlId={argName}
-          key={argName}
-          validationState={this.getValidationState(argName)}
-        >
+              controlId={argName}
+              key={argName}
+              validationState={this.getValidationState(argName)}
+            >
           <ControlLabel><TeX>{arg.description}</TeX></ControlLabel>
-          <FormControl
-            type="file"
-            accept=".csv"
-            onChange={(e) => this.handleChange(e)}
-          />
-          <HelpBlock>Select a function csv file</HelpBlock>
+          <Row>
+            <Col md={6}>
+              <FormControl
+                type="file"
+                accept=".csv"
+                onChange={(e) => this.handleChange(e)}
+              />
+              <HelpBlock>Select a function csv file</HelpBlock>
+            </Col>
+            <Col md={6}>
+              <OverlayTrigger placement="right" overlay={
+                <Tooltip id="tooltip">
+                  <strong>Supported functions & constants:</strong><br />
+                  <code>abs</code> <code>sin</code> <code>cos</code> <code>pow</code> <code>log</code> <code>e</code> <code>pi</code>
+                </Tooltip>
+              }>
+                <FormControl
+                  type="text"
+                  value={this.state[argName]}
+                  onChange={(e) => this.handleChange(e)}
+                />
+              </OverlayTrigger>
+              <HelpBlock>Type a funcion expression (argument <i>x</i>)</HelpBlock>
+            </Col>
+          </Row>
         </FormGroup>
       );
     } else {

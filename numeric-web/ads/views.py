@@ -42,7 +42,10 @@ def api_query(request, problemName):
 
             value = json.loads(request.POST[arg])
             if problem.args[arg].isFunction:
-                args[arg] = process_csv(value)
+                if type(value) == str:
+                    args[arg] = {'type': 'eval', 'value': value}
+                else:
+                    args[arg] = {'type': 'csv', 'value': process_csv(value)}
             else:
                 args[arg] = float(value)
     except (TypeError, IndexError, KeyError, ValueError, AssertionError):

@@ -2,6 +2,8 @@
 # Distributed under the terms of the MIT License.
 
 
+import numpy as np
+
 import numeric
 
 
@@ -30,6 +32,20 @@ class Problem:
             'description': self.description,
             'args': {arg: self.args[arg].get_dict() for arg in self.args}
         }
+
+
+def func_to_tabulated(data, a=-1.0, b=1.0, n=1000):
+    if data['type'] != 'eval':
+        return data['value']
+
+    def func(x):
+        return float(eval(
+            data['value'],
+            {'abs': np.abs, 'sin': np.sin, 'cos': np.cos, 'pow': np.power, 'log': np.log, 'e': np.e, 'pi': np.pi},
+            {'x': x})
+        )
+
+    return numeric.tabulate_chebyshev(func, a, b, n)
 
 
 def tabulate(args):
@@ -62,7 +78,8 @@ def tabulate(args):
 
 
 def tabulate_integral(args):
-    ret = numeric.tabulate_integral(args['1-rho'])
+    func = func_to_tabulated(args['1-rho'])
+    ret = numeric.tabulate_integral(func)
 
     return [
         {
