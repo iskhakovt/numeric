@@ -11,14 +11,14 @@ template <class Real>
 std::pair<Tabulated<Real>, Tabulated<Real>> runge_kutta(
     const FunctionThreeArg<Real> &f, const FunctionThreeArg<Real> &g, Real y0, Real z0, Real T, size_t n)
 {
-    if (n == 0) {
-        throw std::invalid_argument("runge_kutta: n = 0");
+    if (n < 2) {
+        throw std::invalid_argument("runge_kutta: n < 2");
     }
 
     std::vector<Real> x(n), y(n), z(n);
-    Real h = T / n, f1, f2, f3, f4, g1, g2, g3, g4;
+    Real h = T / (n - 1), f1, f2, f3, f4, g1, g2, g3, g4;
 
-    x[0] = 0;
+    x[0] = 0.0;
     y[0] = y0;
     z[0] = z0;
 

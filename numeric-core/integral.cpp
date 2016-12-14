@@ -6,6 +6,8 @@
 
 #include "gauss-kronrod.hpp"
 
+#include <stdexcept>
+
 
 template <class Real>
 Real integral(const Function<Real> &func, Real a, Real b) {
@@ -50,13 +52,25 @@ Real integral_simpson(const Function<Real> &func, Real a, Real b, size_t n) {
 
 template <class Real>
 Tabulated<Real> tabulate_integral(const Function<Real> &func) {
-    std::vector<Real> x(GRID_SIZE), y(GRID_SIZE);
+    std::vector<Real> x = linspace(0.0, 1.0, GRID_SIZE);
+    std::vector<Real> y(x.size());
 
-    for (size_t i = 0; i <= GRID_SIZE; ++i) {
-        Real xVal = 1.0 / GRID_SIZE * i;
+    for (size_t i = 0; i != x.size(); ++i) {
+        y[i] = integral(func, x[i], 1.0);
+    }
 
-        x[i] = xVal;
-        y[i] = integral(func, xVal, 1.0);
+    return Tabulated<Real>(x, y);
+}
+
+
+template <class Real>
+Tabulated<Real> tabulate_integral_tab(const Tabulated<Real> &func) {
+    std::vector<Real> x = func.x, y(func.size(), 0.0);
+
+    for (size_t i = 0; i != x.size(); ++i) {
+        for (size_t j = i + 1; j != x.size(); ++j) {
+            y[i] += (x[j] - x[j - 1]) * (func.y[j] + func.y[j - 1]) / 2.0;
+        }
     }
 
     return Tabulated<Real>(x, y);
@@ -67,3 +81,4 @@ template double integral(const Function<double> &, double, double);
 template double integral_gauss_kronrod(const Function<double> &, double, double, size_t);
 template double integral_simpson(const Function<double> &, double, double, size_t);
 template Tabulated<double> tabulate_integral(const Function<double> &);
+template Tabulated<double> tabulate_integral_tab(const Tabulated<double> &);

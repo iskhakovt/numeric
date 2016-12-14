@@ -66,6 +66,16 @@ static PyObject * tabulated_to_py(const Tabulated<double> &func) {
     return PyTuple_Pack(2, x, y);
 }
 
+static PyObject * results_to_py(const ModelResults<double> &result) {
+    PyObject *x = tabulated_to_py(result.x);
+    PyObject *y = tabulated_to_py(result.y);
+    PyObject *C1 = PyFloat_FromDouble(result.C1);
+    PyObject *C2 = PyFloat_FromDouble(result.C2);
+    PyObject *F = PyFloat_FromDouble(result.F);
+
+    return PyTuple_Pack(5, x, y, C1, C2, F);
+}
+
 static bool py_to_vector(PyObject *list, std::vector<double> *ret) {
     if (!PyList_Check(list)) {
         PyErr_SetObject(PyExc_TypeError, list);
@@ -126,50 +136,6 @@ static bool py_to_matrix(PyObject *matrix, Matrix<double> *ret) {
         return false;
     }
 
-    return true;
-}
-
-static bool py_to_model(PyObject *args, ModelArguments<double> *retArgs, double *beta) {
-    PyObject *uTuple = nullptr, *sTuple = nullptr, *zTuple = nullptr;
-    double x_0, y_0, t;
-
-    if (beta) {
-        if (!PyArg_ParseTuple(
-            args,
-            "O!O!O!dddd",
-            &PyTuple_Type, &uTuple,
-            &PyTuple_Type, &sTuple,
-            &PyTuple_Type, &zTuple,
-            &x_0, &y_0, &t, beta))
-        {
-            return false;
-        }
-    } else {
-        if (!PyArg_ParseTuple(
-            args,
-            "O!O!O!ddd",
-            &PyTuple_Type, &uTuple,
-            &PyTuple_Type, &sTuple,
-            &PyTuple_Type, &zTuple,
-            &x_0, &y_0, &t)
-        ) {
-            return false;
-        }
-    }
-
-    Tabulated<double> u, s, z;
-
-    if (!py_to_tabulated(uTuple, &u)) {
-        return false;
-    }
-    if (!py_to_tabulated(sTuple, &s)) {
-        return false;
-    }
-    if (!py_to_tabulated(zTuple, &z)) {
-        return false;
-    }
-
-    *retArgs = ModelArguments<double>(u, s, z, x_0, y_0, t);
     return true;
 }
 
@@ -292,7 +258,7 @@ static PyObject * numeric_tabulate_integral(PyObject *, PyObject *args) {
             return nullptr;
         }
 
-        return tabulated_to_py(tabulate_integral(func));
+        return tabulated_to_py(tabulate_integral_tab(func));
     } catch (std::exception &err) {
         PyErr_SetString(PyExc_RuntimeError, err.what());
         return nullptr;
@@ -381,16 +347,35 @@ static PyObject * numeric_runge_kutta(PyObject *, PyObject *args) {
 }
 
 
-static PyObject * numeric_model(PyObject *, PyObject *args) {
+static PyObject * numeric_solve_model(PyObject *, PyObject *args) {
     try {
-        ModelArguments<double> modelArgs;
-        double beta;
+        PyObject *rhoTuple = nullptr, *STuple = nullptr, *zTuple = nullptr;
+        double x0, y0, T, beta;
 
-        if (!py_to_model(args, &modelArgs, &beta)) {
+        if (!PyArg_ParseTuple(
+            args,
+            "O!O!O!dddd",
+            &PyTuple_Type, &rhoTuple,
+            &PyTuple_Type, &STuple,
+            &PyTuple_Type, &zTuple,
+            &x0, &y0, &T, &beta))
+        {
             return nullptr;
         }
 
-        return tabulated_to_py(solve_model(modelArgs, beta));
+        Tabulated<double> rho, S, z;
+
+        if (!py_to_tabulated(rhoTuple, &rho)) {
+            return nullptr;
+        }
+        if (!py_to_tabulated(STuple, &S)) {
+            return nullptr;
+        }
+        if (!py_to_tabulated(zTuple, &z)) {
+            return nullptr;
+        }
+
+        return results_to_py(solve_model(ModelArguments<double>(rho, S, z, x0, y0, T), beta));
     } catch (std::exception &err) {
         PyErr_SetString(PyExc_RuntimeError, err.what());
         return nullptr;
@@ -399,12 +384,33 @@ static PyObject * numeric_model(PyObject *, PyObject *args) {
 
 static PyObject * numeric_beta_search(PyObject *, PyObject *args) {
     try {
-        ModelArguments<double> modelArgs;
-        if (!py_to_model(args, &modelArgs, nullptr)) {
+        PyObject *rhoTuple = nullptr, *STuple = nullptr, *zTuple = nullptr;
+        double x0, y0, T, beta_begin, beta_end;
+
+        if (!PyArg_ParseTuple(
+            args,
+            "O!O!O!ddddd",
+            &PyTuple_Type, &rhoTuple,
+            &PyTuple_Type, &STuple,
+            &PyTuple_Type, &zTuple,
+            &x0, &y0, &T, &beta_begin, &beta_end))
+        {
             return nullptr;
         }
 
-        return PyFloat_FromDouble(beta_search(modelArgs));
+        Tabulated<double> rho, S, z;
+
+        if (!py_to_tabulated(rhoTuple, &rho)) {
+            return nullptr;
+        }
+        if (!py_to_tabulated(STuple, &S)) {
+            return nullptr;
+        }
+        if (!py_to_tabulated(zTuple, &z)) {
+            return nullptr;
+        }
+
+        return PyFloat_FromDouble(beta_search(ModelArguments<double>(rho, S, z, x0, y0, T), beta_begin, beta_end));
     } catch (std::exception &err) {
         PyErr_SetString(PyExc_RuntimeError, err.what());
         return nullptr;
@@ -419,12 +425,12 @@ static PyMethodDef NumericMethods[] = {
         {"tabulate_spline",  numeric_tabulate_spline, METH_VARARGS, "tabulate_spline"},
         {"integral_gauss_kronrod",  numeric_integral_gauss_kronrod, METH_VARARGS, "integral_gauss_kronrod"},
         {"integral_simpson",  numeric_integral_simpson, METH_VARARGS, "integral_simpson"},
-        {"tabulate_integral",  numeric_tabulate_integral, METH_VARARGS, "tabulate integral"},
+        {"tabulate_integral",  numeric_tabulate_integral, METH_VARARGS, "tabulate_integral"},
         {"gaussian_elimination",  numeric_gaussian_elimination, METH_VARARGS, "gaussian_elimination"},
         {"lu_decomposition", numeric_lu_decomposition, METH_VARARGS, "lu_decomposition"},
         {"tridiagonal_thomas",  numeric_tridiagonal_thomas, METH_VARARGS, "tridiagonal_thomas"},
         {"runge_kutta",  numeric_runge_kutta, METH_VARARGS, "runge_kutta"},
-        {"cauchy",  numeric_model, METH_VARARGS, "cauchy"},
+        {"solve_model",  numeric_solve_model, METH_VARARGS, "solve_model"},
         {"beta_search",  numeric_beta_search, METH_VARARGS, "beta search"},
         {nullptr, nullptr, 0, nullptr} /* Sentinel */
 };

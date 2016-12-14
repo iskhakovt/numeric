@@ -62,6 +62,9 @@ def api_query(request, problemName):
 
 def api_result(request, id):
     query = get_object_or_404(Query, id=id)
+
+    print(query.status)
+
     return JsonResponse(query.get_dict())
 
 

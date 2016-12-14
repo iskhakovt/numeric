@@ -93,10 +93,10 @@ class Result extends React.Component {
   getResult(data, key) {
     if (data.type === 'title') {
       return (
-        <div key={key}>
+        <p key={key}>
           <h1><TeX>{data.data}</TeX></h1>
           <hr />
-        </div>
+        </p>
       );
     } else if (data.type === 'text') {
       return (
@@ -104,13 +104,15 @@ class Result extends React.Component {
       );
     } else if (data.type === 'function') {
       return (
-        <Button
-          bsStyle="info"
-          onClick={() => this.download(data.filename, data.data)}
-          key={key}
-        >
-          <TeX>{data.description}</TeX>
-        </Button>
+        <p>
+          <Button
+            bsStyle="info"
+            onClick={() => this.download(data.filename, data.data)}
+            key={key}
+          >
+            <TeX>{data.description}</TeX>
+          </Button>
+        </p>
       );
     } else if (data.type === 'graph') {
       var graphData = [
@@ -129,12 +131,14 @@ class Result extends React.Component {
       }
 
       return (
-        <Plotly
-          className="whatever"
-          data={graphData}
-          layout={layout}
-          key={key}
-        />
+        <p>
+          <Plotly
+            className="whatever"
+            data={graphData}
+            layout={layout}
+            key={key}
+          />
+        </p>
       );
     }
   }

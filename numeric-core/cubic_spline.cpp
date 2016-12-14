@@ -50,18 +50,33 @@ CubicSpline<Real>::CubicSpline(const Tabulated<Real> &func) : grid(func.x), spli
 
 
 template <class Real>
-Real CubicSpline<Real>::operator()(Real x) const {
+size_t CubicSpline<Real>::find_spline(Real x) const {
     typename std::vector<SplineTuple>::const_iterator spline_it;
     auto grid_it = std::upper_bound(grid.begin(), grid.end(), x);
 
     if (grid_it == grid.end()) {
         --grid_it;
     }
-    spline_it = splines.begin() + (grid_it - grid.begin());
 
-    Real dx = x - *grid_it;
+    return grid_it - grid.begin();
+}
 
-    return spline_it->a + (spline_it->b + (spline_it->c / 2.0 + spline_it->d * dx / 6.0) * dx) * dx;
+
+template <class Real>
+Real CubicSpline<Real>::operator()(Real x) const {
+    size_t idx = find_spline(x);
+    Real dx = x - grid[idx];
+
+    return splines[idx].a + (splines[idx].b + (splines[idx].c / 2.0 + splines[idx].d / 6.0 * dx) * dx) * dx;
+}
+
+
+template <class Real>
+Real CubicSpline<Real>::derivative(Real x) const {
+    size_t idx = find_spline(x);
+    Real dx = x - grid[idx];
+
+    return splines[idx].b + (splines[idx].c + splines[idx].d / 2.0 * dx) * dx;
 }
 
 

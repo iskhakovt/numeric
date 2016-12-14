@@ -10,6 +10,7 @@
 #include "function.hpp"
 #include "matrix.hpp"
 #include "model_arguments.hpp"
+#include "model_results.hpp"
 #include "polynomial.hpp"
 #include "tabulated.hpp"
 
@@ -51,6 +52,9 @@ template <class Real>
 Tabulated<Real> tabulate_integral(const Function<Real> &);
 
 template <class Real>
+Tabulated<Real> tabulate_integral_tab(const Tabulated<Real> &);
+
+template <class Real>
 std::vector<Real> linear_system(const Matrix<Real> &, const std::vector<Real> &);
 
 template <class Real>
@@ -69,10 +73,10 @@ std::pair<Tabulated<Real>, Tabulated<Real>> runge_kutta(
     const FunctionThreeArg<Real> &, const FunctionThreeArg<Real> &, Real, Real, Real, size_t);
 
 template <class Real>
-Tabulated<Real> solve_model(const ModelArguments<Real> &, Real);
+ModelResults<Real> solve_model(const ModelArguments<Real> &, Real);
 
 template <class Real>
-Real beta_search(const ModelArguments<Real> &);
+Real beta_search(const ModelArguments<Real> &, Real, Real);
 
 
 template <class Real>

@@ -21,11 +21,15 @@ class CubicSpline : public Function<Real> {
     std::vector<Real> grid;
     std::vector<SplineTuple> splines;
 
+    size_t find_spline(Real) const;
+
 public:
     CubicSpline() {}
     explicit CubicSpline(const Tabulated<Real> &);
 
     Real operator()(Real) const override;
+
+    Real derivative(Real) const;
 };
 
 

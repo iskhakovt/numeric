@@ -34,18 +34,21 @@ class Problem:
         }
 
 
-def func_to_tabulated(data, a=-1.0, b=1.0, n=1000):
+def func_to_tabulated(data, a=0.0, b=1.0, n=1000):
     if data['type'] != 'eval':
         return data['value']
 
     def func(x):
         return float(eval(
             data['value'],
-            {'abs': np.abs, 'sin': np.sin, 'cos': np.cos, 'pow': np.power, 'log': np.log, 'e': np.e, 'pi': np.pi},
+            {
+                'abs': np.abs, 'sin': np.sin, 'cos': np.cos,
+                'pow': np.power, 'log': np.log, 'e': np.e, 'pi': np.pi
+            },
             {'x': x})
         )
 
-    return numeric.tabulate_chebyshev(func, a, b, n)
+    return numeric.tabulate_linspace(func, a, b, n)
 
 
 def tabulate(args):
@@ -58,14 +61,11 @@ def tabulate(args):
     return [
         {
             'type': 'title',
-            'data': '\\text{Задание функции }\\rho(\\omega) = ' +
-                    str(round(a, 2)) +
-                    '\\omega(' + str(round(b, 2)) +
-                    ' - \\omega)'
+            'data': '\\text{{Задание функции }}\\rho(\\omega) = {:.2f}\\omega({:.2f} - \\omega)'.format(a, b)
         },
         {
             'type': 'function',
-            'description': '\\text{Загрузить }\\rho(\\omega)',
+            'description': '\\rho(\\omega)',
             'filename': 'rho',
             'data': ret
         },
@@ -88,16 +88,87 @@ def tabulate_integral(args):
         },
         {
             'type': 'function',
-            'description': 'result',
-            'filename': 'result',
+            'description': 'integral',
+            'filename': 'integral',
             'data': ret
-        }
+        },
+        {
+            'type': 'graph',
+            'description': 'График ρ',
+            'data': func
+        },
+        {
+            'type': 'graph',
+            'description': 'График интеграла',
+            'data': ret
+        },
+    ]
+
+
+def solve_cauchy(rho, S, z, x0, y0, T, beta):
+    ret = numeric.solve_model(rho, S, z, x0, y0, T, beta)
+
+    spline_S = numeric.tabulate_spline(S, 0.0, T, 1000)
+    spline_x = numeric.tabulate_spline(ret[0], 0.0, T, 1000)
+    diff = (spline_S[0], (np.array(spline_x[1]) - np.array(spline_S[1])).tolist())
+
+    return [
+        {
+            'type': 'title',
+            'data': '\\Phi = 1.0 \cdot {:.2f} + 10.0 \cdot {:.2f} = {:.2f}'.format(
+                ret[2], ret[3], ret[4]
+            )
+        },
+        {
+            'type': 'function',
+            'description': 'x',
+            'filename': 'x',
+            'data': ret[0]
+        },
+        {
+            'type': 'function',
+            'description': 'y',
+            'filename': 'y',
+            'data': ret[1]
+        },
+        {
+            'type': 'graph',
+            'description': 'График ρ',
+            'data': rho
+        },
+        {
+            'type': 'graph',
+            'description': 'График x',
+            'data': ret[0]
+        },
+        {
+            'type': 'graph',
+            'description': 'График S',
+            'data': S
+        },
+        {
+            'type': 'graph',
+            'description': 'График z',
+            'data': z
+        },
+        {
+            'type': 'graph',
+            'description': 'График x(t) - S(t)',
+            'data': diff
+        },
+        {
+            'type': 'graph',
+            'description': 'График y',
+            'data': ret[1]
+        },
     ]
 
 
 def cauchy(args):
-    ret = numeric.cauchy(
-        args['1-U'], args['2-S'], args['3-z'],
+    ret = solve_cauchy(
+        func_to_tabulated(args['1-rho']),
+        func_to_tabulated(args['2-S'], 0.0, args['6-T']),
+        func_to_tabulated(args['3-z'], 0.0, args['6-T']),
         args['4-x0'], args['5-y0'], args['6-T'], args['7-beta']
     )
 
@@ -106,23 +177,22 @@ def cauchy(args):
             'type': 'title',
             'data': '\\text{Решение задачи Коши}'
         },
-        {
-            'type': 'function',
-            'description': 'f',
-            'filename': 'result',
-            'data': ret
-        }
-    ]
+    ] + ret
 
 
 def beta_search(args):
+    rho = func_to_tabulated(args['1-rho'])
+    S = func_to_tabulated(args['2-s'], 0.0, args['6-T'])
+    z = func_to_tabulated(args['3-z'], 0.0, args['6-T'])
+
     beta = numeric.beta_search(
-        args['1-U'], args['2-S'], args['3-z'],
-        args['4-x0'], args['5-y0'], args['6-T']
+        rho, S, z,
+        args['4-x0'], args['5-y0'], args['6-T'],
+        args['8-beta_begin'], args['9-beta_end']
     )
 
-    model = numeric.cauchy(
-        args['1-U'], args['2-S'], args['3-z'],
+    ret = solve_cauchy(
+        rho, S, z,
         args['4-x0'], args['5-y0'], args['6-T'], beta
     )
 
@@ -135,13 +205,7 @@ def beta_search(args):
             'type': 'text',
             'data': '\\beta=' + str(beta)
         },
-        {
-            'type': 'function',
-            'description': 'f',
-            'filename': 'result',
-            'data': model
-        }
-    ]
+    ] + ret
 
 
 PROBLEMS = {
@@ -167,7 +231,7 @@ PROBLEMS = {
         '\\text{Решение задачи Коши}',
         '\\text{Решение задачи Коши}',
         {
-            '1-U': ProblemArgument('U(y)', True),
+            '1-rho': ProblemArgument('\\rho(\\omega)', True),
             '2-S': ProblemArgument('S(t)', True),
             '3-z': ProblemArgument('z(t)', True),
             '4-x0': ProblemArgument('x_0', False),
@@ -179,14 +243,16 @@ PROBLEMS = {
     ),
     '4-beta-search': Problem(
         '\\beta Search',
-        '\\beta Search',
+        '\\beta Search \in \[beta_{begin}, beta_{end}\]',
         {
-            '1-U': ProblemArgument('U(y)', True),
+            '1-rho': ProblemArgument('\\rho(\\omega)', True),
             '2-S': ProblemArgument('S(t)', True),
             '3-z': ProblemArgument('z(t)', True),
             '4-x0': ProblemArgument('x_0', False),
             '5-y0': ProblemArgument('y_0', False),
             '6-T': ProblemArgument('T', False),
+            '7-beta_begin': ProblemArgument('beta_{begin}', False),
+            '8-beta_end': ProblemArgument('beta_{end}', False),
         },
         beta_search
     )

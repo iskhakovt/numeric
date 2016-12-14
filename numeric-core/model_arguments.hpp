@@ -8,31 +8,25 @@
 
 #include "tabulated.hpp"
 
-#include <stdexcept>
-
 
 template <class Real>
 struct ModelArguments {
-    Tabulated<Real> u;
-    Tabulated<Real> s;
+    Tabulated<Real> rho;
+    Tabulated<Real> S;
     Tabulated<Real> z;
     Real x0;
     Real y0;
-    Real t;
+    Real T;
 
     ModelArguments() {}
     ModelArguments(
-        const Tabulated<Real> &u,
-		const Tabulated<Real> &s,
+        const Tabulated<Real> &rho,
+		const Tabulated<Real> &S,
 		const Tabulated<Real> &z,
 		Real x0,
 		Real y0,
-		Real t
-	) : u(u), s(s), z(z), x0(x0), y0(y0), t(t) {
-        if (u.size() != s.size() || s.x != z.x) {
-            throw std::invalid_argument("ModelArguments::ModelArguments: bad model arguments");
-        }
-    }
+		Real T
+	) : rho(rho), S(S), z(z), x0(x0), y0(y0), T(T) {}
 };
 
 
