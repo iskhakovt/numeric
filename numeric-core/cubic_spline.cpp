@@ -6,11 +6,16 @@
 #include "core.hpp"
 
 #include <algorithm>
+#include <stdexcept>
 
 
 template <class Real>
 CubicSpline<Real>::CubicSpline(const Tabulated<Real> &func) : grid(func.x), splines(func.size() - 1) {
     size_t n = func.size();
+
+    if (n < 2) {
+        throw std::invalid_argument("CubicSpline::CubicSpline: n < 2");
+    }
 
     for (size_t i = 0; i != n - 1; ++i) {
         splines[i].a = func.y[i + 1];

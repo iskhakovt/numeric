@@ -8,6 +8,10 @@
 
 template <class Real>
 Tabulated<Real>::Tabulated(const std::vector<Real> &x, const std::vector<Real> &y) : x(x), y(y) {
+    if (x.size() == 0) {
+        throw std::invalid_argument("Tabulated::Tabulated: empty function");
+    }
+
     if (x.size() != y.size()) {
         throw std::invalid_argument("Tabulated::Tabulated: tabluated different sizes");
     }

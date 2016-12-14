@@ -98,8 +98,8 @@ static bool py_to_tabulated(PyObject *func, Tabulated<double> *ret) {
 
     try {
         *ret = Tabulated<double>({x, y});
-    } catch (std::invalid_argument) {
-        PyErr_SetString(PyExc_ValueError, "invalid tabulated format");
+    } catch (std::invalid_argument &err) {
+        PyErr_SetString(PyExc_ValueError, err.what());
         return false;
     }
 
@@ -121,8 +121,8 @@ static bool py_to_matrix(PyObject *matrix, Matrix<double> *ret) {
 
     try {
         *ret = Matrix<double>(ret_matrix);
-    } catch (std::invalid_argument) {
-        PyErr_SetString(PyExc_ValueError, "invalid matrix format");
+    } catch (std::invalid_argument &err) {
+        PyErr_SetString(PyExc_ValueError, err.what());
         return false;
     }
 
@@ -140,7 +140,7 @@ static bool py_to_model(PyObject *args, ModelArguments<double> *retArgs, double 
             &PyTuple_Type, &uTuple,
             &PyTuple_Type, &sTuple,
             &PyTuple_Type, &zTuple,
-            &x_0, &y_0, &t, &beta))
+            &x_0, &y_0, &t, beta))
         {
             return false;
         }
