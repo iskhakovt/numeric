@@ -182,13 +182,13 @@ def cauchy(args):
 
 def beta_search(args):
     rho = func_to_tabulated(args['1-rho'])
-    S = func_to_tabulated(args['2-s'], 0.0, args['6-T'])
+    S = func_to_tabulated(args['2-S'], 0.0, args['6-T'])
     z = func_to_tabulated(args['3-z'], 0.0, args['6-T'])
 
     beta = numeric.beta_search(
         rho, S, z,
         args['4-x0'], args['5-y0'], args['6-T'],
-        args['8-beta_begin'], args['9-beta_end']
+        args['7-beta_begin'], args['8-beta_end']
     )
 
     ret = solve_cauchy(
@@ -243,7 +243,7 @@ PROBLEMS = {
     ),
     '4-beta-search': Problem(
         '\\beta Search',
-        '\\beta Search \in \[beta_{begin}, beta_{end}\]',
+        '\\beta Search \in [beta_{begin}, beta_{end}]',
         {
             '1-rho': ProblemArgument('\\rho(\\omega)', True),
             '2-S': ProblemArgument('S(t)', True),

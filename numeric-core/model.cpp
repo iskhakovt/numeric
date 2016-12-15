@@ -36,7 +36,7 @@ Real C1(const ModelArguments<Real> &args, const Tabulated<Real> &x, const Tabula
 
     auto integral = tabulate_integral_tab(Tabulated<Real>(t, g));
 
-    return 1.0 - integral.y[0] / (args.T - args.x0);
+    return 1.0 - integral.y[0] / (spline_x(args.T) - args.x0);
 }
 
 template <class Real>
