@@ -9,12 +9,15 @@
 * [Splines](cubic_spline.cpp):
   * Cubic spline
 * [Integration](integral.cpp):
+  * Trapezoidal rule
   * Simpson's rule
   * Gauss&ndash;Kronrod quadrature
 * [Linear system](linear_system.cpp):
   * Gaussian elimination
   * LU decomposition
   * Thomas algorithm (tridiagonal matrix)
+* [Differential equation](differential_equation.cpp):
+  * Runge&ndash;kutta method
 
 
 ## Requirements
