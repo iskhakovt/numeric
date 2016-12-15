@@ -16,8 +16,8 @@
 * `lu_decomposition(матрица, вектор)`
 * `tridiagonal_thomas(вектор, вектор, вектор)`
 * `runge_kutta(функция от 3 аргументов, функция от 3 аргументов, x0, y0, T, количество точек)`
-* `solve_mode(аргументы модели, beta),
-* `beta search(аргументы модели, beta_start, beta_end)
+* `solve_mode(аргументы модели, beta)`,
+* `beta search(аргументы модели, beta_start, beta_end)`
 
 ## Тестирование:
 * [Численное интегрирование](integral.ipynb)
