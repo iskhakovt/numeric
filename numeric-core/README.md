@@ -8,6 +8,7 @@
   * Derivative evaluation
 * [Splines](cubic_spline.cpp):
   * Cubic spline
+  * Derivative evaluation
 * [Integration](integral.cpp):
   * Trapezoidal rule
   * Simpson's rule
