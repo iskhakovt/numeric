@@ -1,3 +1,26 @@
+# User Interface
+
+A flexible user interface to run and schedule tasks.
+A user can set up a task, it runs asynchronously via Celery and then a result is shown.
+
+All tasks should be set up in [ads/problems.py](ads/problems.py) file variable `PROBLEMS`.
+
+Problem structure:
+```{python}
+Problem(
+    short_description,
+    description,
+    arguments,
+    function
+)
+```
+
+Currently supported argument types: *float value*, *function (tabulated or expression)*.
+
+Once task is created, `function` will be called. It should return a list of results.
+
+Currently supported result types: *title*, *function (tabulated)*, *graph*.
+
 
 ## Setting up
 
