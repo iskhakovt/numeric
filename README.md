@@ -3,6 +3,13 @@
 
 *Timur Iskhakov, 141*
 
+---
+
+An investigation of the dependence of ad relevance and ad display algorithm.
+
+The project uses own numeric methods library and a flexible UI is built to maintain computation calls.
+
+
 ## Modules:
 
 * `numeric-core` — computation implemented in C++
