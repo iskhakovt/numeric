@@ -18,7 +18,7 @@
   * LU decomposition
   * Thomas algorithm (tridiagonal matrix)
 * [Differential equation](differential_equation.cpp):
-  * Runge&ndash;kutta method
+  * Runge&ndash;Kutta method
 
 
 ## Requirements
