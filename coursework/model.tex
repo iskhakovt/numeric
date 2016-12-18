@@ -1,0 +1,88 @@
+\documentclass[fleqn]{article}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{amssymb,amsfonts,amsmath}
+\usepackage{fullpage}
+
+\renewcommand{\d}[1]{\ensuremath{\operatorname{d}\!{#1}}}
+
+
+\begin{document}
+\pagenumbering{gobble}
+\setlength\parindent{0pt}
+
+
+\section{Обозначения}
+
+$t$~--- время.
+
+$T$~--- длительность размещения.
+
+$z(t)$~--- нарастающий общий трафик.
+
+$S(t)$~--- требуемое нарастающее значение количества показов по плану.
+
+$x(t)$~--- реальное количество показов, достигнутых к моменту времени $t$.
+
+$y(t)$~--- параметр фильтрации по соц-дем признакам~--- порог вероятности попадания в таргет для прохождения фильтра.
+
+$\omega$~--- вероятность посетителя попасть в таргет.
+
+$\rho(\omega)$~--- распределение аудитории по вероятности попадания в таргет.
+
+$f(z(t), x(t), S(t), \beta)$~--- функция коррекции параметра $y$.
+
+$\beta$~--- подбираемый параметр.
+
+
+\section{Cистема ОДУ}
+
+\begin{equation*}
+  \frac{\d{x}}{\d{t}} = \dot{z}(t) \int\limits_y^1 \rho(\omega)\d{\omega}
+\end{equation*}
+\begin{equation*}
+  \frac{\d{y}}{\d{t}} = f_\beta(z, x, S)
+\end{equation*}
+\begin{equation*}
+  f_\beta(z, x, S) = f(z, x, S, \beta), \beta = const
+\end{equation*}
+\begin{equation*}
+  S = S(t)
+\end{equation*}
+\begin{equation*}
+  x(t = 0) = X_0
+\end{equation*}
+\begin{equation*}
+  y(t = 0) = Y_0
+\end{equation*}
+
+
+\section{Дополнительные условия}
+
+\begin{equation*}
+  \int\limits_0^1 \rho(\omega)\d{\omega} = 1
+\end{equation*}
+\begin{equation*}
+    \dot{S}(t) \lesssim \dot{z}(t)
+\end{equation*}
+\begin{equation*}
+    0 \le y \le 1
+\end{equation*}
+
+
+\section{Критерии качества}
+
+\begin{equation*}
+    C_1(\beta) = 1 - \frac{1}{x(T) - X_0} \int\limits_0^T \d{t}\, \dot{x}(t) \int\limits_y^1 \omega\rho(\omega)\d{\omega}
+\end{equation*}
+\begin{equation*}
+    C_2(\beta) = \frac{\left|x(T) - S(T)\right|}{S(T)}
+\end{equation*}
+
+\begin{equation*}
+    \Phi(\beta) = A \cdot C_1(\beta) + B \cdot C_2(\beta) \rightarrow \operatorname{min}
+\end{equation*}
+
+
+\end{document}

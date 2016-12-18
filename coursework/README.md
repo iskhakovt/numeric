@@ -19,6 +19,9 @@
 * `solve_mode(аргументы модели, beta)`,
 * `beta search(аргументы модели, beta_start, beta_end)`
 
+## Модель:
+* [Модель показа рекламы](model.pdf)
+
 ## Тестирование:
 * [Численное интегрирование](integral.ipynb)
 * [Решение СЛАУ и сплайн](linear system and spline.ipynb)
