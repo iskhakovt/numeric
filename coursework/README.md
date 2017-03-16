@@ -24,5 +24,5 @@
 
 ## Тестирование:
 * [Численное интегрирование](integral.ipynb)
-* [Решение СЛАУ и сплайн](linear\ system\ and\ spline.ipynb)
-* [Решение задачи Коши](differential\ equation.ipynb)
+* [Решение СЛАУ и сплайн](linear_system_and_spline.ipynb)
+* [Решение задачи Коши](differential_equation.ipynb)
